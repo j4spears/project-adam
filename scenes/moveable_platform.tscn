@@ -1,0 +1,135 @@
+[gd_scene load_steps=2 format=3 uid="uid://cr4xjtwyinby8"]
+
+[sub_resource type="GDScript" id="GDScript_vrlb5"]
+script/source = "extends Node2D
+
+@export var speed = 2000
+
+@onready var path_2d:= get_node(\"Path2D\")
+@onready var platform:= path_2d.get_node(\"AnimatableBody2D\")
+@onready var path_follow:= path_2d.get_node(\"PathFollow\")
+
+@onready var player:= get_parent().get_node(\"Player\")
+@onready var blast_area:= get_parent().get_node(\"Player/Gun/BlastArea\")
+@onready var line_2d: Line2D = $Line2D
+@onready var jump_boost_buffer: Timer = $JumpBoostBuffer
+
+
+var destination_point
+var angle
+var last_surface
+var direction
+var jump_boost_buffer_timeout
+
+func _ready() -> void:
+	
+	line_2d.points[0] = path_2d.curve.get_point_position(0)
+	line_2d.points[1] = path_2d.curve.get_point_position(1)
+	
+	angle = path_2d.curve.get_point_position(0).angle_to_point(path_2d.curve.get_point_position(1))
+	
+	if is_zero_approx(angle): direction = \"right\"
+	elif is_zero_approx(angle + PI/4): direction = \"up_right\"
+	elif is_zero_approx(angle - PI/4): direction = \"down_right\"
+	elif is_zero_approx(angle + PI/2): direction = \"up\"
+	else: print(\"moving platform must have disctrete gradient\")
+
+func _process(delta: float) -> void: 
+	
+	if player.state == player.states.CROUCH and player.blast_collision.disabled == false and is_on_platform():
+		
+		if direction == \"right\":
+			if player.rs_zone == 2 or player.rs_zone == 1 or player.rs_zone == 8: new_destination(1)
+			elif player.rs_zone == 4 or player.rs_zone == 5 or player.rs_zone == 6: new_destination(0)
+			
+		elif direction == \"up_right\":
+			if player.rs_zone == 1 or player.rs_zone == 8 or player.rs_zone == 7: new_destination(1)
+			elif player.rs_zone == 3 or player.rs_zone == 4 or player.rs_zone == 5: new_destination(0)
+			
+		elif direction == \"down_right\":
+			if player.rs_zone == 1 or player.rs_zone == 2 or player.rs_zone == 3: new_destination(1)
+			elif player.rs_zone == 5 or player.rs_zone == 6 or player.rs_zone == 7: new_destination(0)
+			
+		elif direction == \"up\":
+			if player.rs_zone == 8 or player.rs_zone == 7 or player.rs_zone == 6: new_destination(1)
+			elif player.rs_zone == 2 or player.rs_zone == 3 or player.rs_zone == 4: new_destination(0)
+		
+	elif blast_area.get_overlapping_bodies().has(platform) and not is_on_platform():
+		
+		if direction == \"right\":
+			if player.rs_zone == 2 or player.rs_zone == 1 or player.rs_zone == 8: new_destination(0)
+			elif player.rs_zone == 4 or player.rs_zone == 5 or player.rs_zone == 6: new_destination(1)
+			
+		elif direction == \"up_right\":
+			if player.rs_zone == 1 or player.rs_zone == 8 or player.rs_zone == 7: new_destination(0)
+			elif player.rs_zone == 3 or player.rs_zone == 4 or player.rs_zone == 5: new_destination(1)
+			
+		elif direction == \"down_right\":
+			if player.rs_zone == 1 or player.rs_zone == 2 or player.rs_zone == 3: new_destination(0)
+			elif player.rs_zone == 5 or player.rs_zone == 6 or player.rs_zone == 7: new_destination(1)
+			
+		elif direction == \"up\":
+			if player.rs_zone == 8 or player.rs_zone == 7 or player.rs_zone == 6: new_destination(0)
+			elif player.rs_zone == 2 or player.rs_zone == 3 or player.rs_zone == 4: new_destination(1)
+	
+	
+	if player.get_last_slide_collision(): last_surface = player.get_last_slide_collision().get_collider()
+	
+	if destination_point == 0 and path_follow.progress_ratio > 0.0: path_follow.progress -= speed * delta
+	elif destination_point == 1 and path_follow.progress_ratio < 1.0: path_follow.progress += speed * delta
+	
+	if destination_point == 0 and path_follow.progress_ratio == 0 and not jump_boost_buffer_timeout: 
+		jump_boost_buffer.paused = false
+		jump_boost_buffer_timeout = true
+	elif destination_point == 1 and path_follow.progress_ratio == 1 and not jump_boost_buffer_timeout: 
+		jump_boost_buffer.paused = false
+		jump_boost_buffer_timeout = true
+	
+	if jump_boost_buffer.time_left > 0: can_jump_boost()
+
+
+func new_destination(new_desitnation):
+	destination_point = new_desitnation
+	jump_boost_buffer_timeout = false
+	jump_boost_buffer.start()
+	jump_boost_buffer.paused = true
+
+func can_jump_boost():
+	
+	if Input.is_action_just_pressed(\"jump\") and last_surface == platform:
+		
+		if destination_point == 0 : 
+			
+			if direction == \"right\": player.velocity -= Vector2(1.5,0) * speed
+			elif direction == \"up_right\": player.velocity -= Vector2(3,-1).normalized() * speed
+			elif direction == \"down_right\": player.velocity -= Vector2(3,1).normalized() * speed
+			elif direction == \"up\": player.velocity -= Vector2(0,-0.5) * speed
+			
+		elif destination_point == 1: 
+			
+			if direction == \"right\": player.velocity += Vector2(1.5,0) * speed
+			elif direction == \"up_right\": player.velocity += Vector2(3,-1).normalized() * speed
+			elif direction == \"down_right\": player.velocity += Vector2(3,1).normalized() * speed
+			elif direction == \"up\": player.velocity += Vector2(0,-0.5) * speed
+
+func is_on_platform(): 
+	
+	if player.get_last_slide_collision():
+		
+		if player.get_last_slide_collision().get_collider() == platform: return true
+		elif not player.get_last_slide_collision().get_collider() == platform: return false
+		
+	else: return false
+"
+
+[node name="MoveablePlatform" type="Node2D"]
+script = SubResource("GDScript_vrlb5")
+
+[node name="Line2D" type="Line2D" parent="."]
+show_behind_parent = true
+points = PackedVector2Array(0, 0, 0, 0)
+default_color = Color(1, 1, 1, 0.243137)
+
+[node name="JumpBoostBuffer" type="Timer" parent="."]
+wait_time = 0.05
+one_shot = true
