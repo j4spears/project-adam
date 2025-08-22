@@ -1,3 +1,5 @@
+Label
+RichTextLabel
 StaticBody2D
 CollisionShape2D
 Sprite2D

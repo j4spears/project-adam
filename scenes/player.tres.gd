@@ -54,6 +54,9 @@ enum aiming_type {discrete, continuous}
 @onready var blast_area: Area2D = $Gun/BlastArea
 @onready var blast_collision: CollisionPolygon2D = $Gun/BlastArea/BlastCollision
 @onready var animations: AnimationPlayer = $Gun/Blastvfx/AnimationPlayer
+@onready var label: Label = $Label
+
+
 
 var bullet = preload("res://scenes/bullet.tscn")
 
@@ -110,12 +113,14 @@ func _physics_process(delta):
 #region ENTER STATE
 
 func enter_run(): 
+	#label.text = "run"
 	#print("run")
 	msg = []
 	hang_timer.stop()
 	dash_used = false
 
 func enter_jump():
+	#label.text = "jump"
 	#print("jump")
 	jump_sfx.play()
 	if msg == ["wall_to_left"]: velocity.x = wall_jump_distance
@@ -124,11 +129,13 @@ func enter_jump():
 	velocity.y = -jump_force
 
 func enter_fall(): 
+	#label.text = "fall"
 	#print("fall")
 	cayote_time.start() 
 	if variable_jump == 2: velocity.y = 0
 
 func enter_dash(): 
+	#label.text = "dash"
 	#print("dash")
 	animations.play("blast")
 	blast_sfx.play()
@@ -142,13 +149,15 @@ func enter_dash():
 	Input.start_joy_vibration(0,1,1,0.175)
 
 func enter_crouch():
+	#label.text = "crouch"
 	#print("crouch")
 	hang_timer.stop()
 	body.position.y = -17
 	body.scale.y = 65.18
 
 func enter_wallslide():
-	print("wallslide")
+	#label.text = "wallslide"
+	#print("wallslide")
 	if wallslide_resets_dash: dash_used = false
 
 #endregion
@@ -171,7 +180,6 @@ func run(delta):
 	if Input.is_action_just_pressed("dash"): change_state(states.DASH)
 
 func jump(delta):
-	
 	
 	if not animations.current_animation == "blast": 
 		aim()
@@ -269,8 +277,7 @@ func wallslide(delta):
 	if wallslide_resets_dash and Input.is_action_just_pressed("dash"): change_state(states.DASH)
 	
 	if Input.is_action_just_pressed("jump") or not jump_buffer.time_left == 0: change_state(states.JUMP)
-	
-	if  not is_on_wall(): change_state(states.FALL)
+	elif  not is_on_wall(): change_state(states.FALL)
 	elif get_wall_normal().x == 1 and not Input.is_action_pressed("ls_left"): change_state(states.FALL)
 	elif get_wall_normal().x == -1 and not Input.is_action_pressed("ls_right"): change_state(states.FALL)
 
