@@ -2,11 +2,12 @@ extends CharacterBody2D
 
 #region VARIABLES
 
-@export_category("Run")
-@export var speed: float = 1000
-@export var crouch_speed: float = 200
+@export_category("Move")
+@export var speed: float = 500
+@export var crouch_speed: float = 100
 @export var acceleration:= 5
 @export var deceleration:= 5
+@export var dodge_speed:= 1000
 enum variable_speed_type {none, discrete, continuous}
 @export var variable_speed = variable_speed_type.none
 
@@ -43,6 +44,7 @@ enum aiming_type {discrete, continuous}
 @onready var dash_time: Timer = $Timers/DashTime
 @onready var shoot_cooldown: Timer = $Timers/ShootCooldown
 @onready var shoot_heavy_cooldown: Timer = $Timers/ShootHeavyCooldown
+@onready var dodge_time: Timer = $Timers/DodgeTime
 
 @onready var blast_sfx: AudioStreamPlayer = $Sfx/Blast
 @onready var jump_sfx: AudioStreamPlayer = $Sfx/Jump
@@ -67,12 +69,14 @@ var rs_zone
 var ls_angle
 var ls_zone
 var dash_used:= false
+var burst_used:= false
+var bullets_shot := 0
 
 #endregion
 
 #region STATE MACHINE
 
-enum states {RUN, JUMP, FALL, DASH, CROUCH, WALLSLIDE}
+enum states {RUN, JUMP, FALL, DASH, CROUCH, WALLSLIDE, DODGEROLL}
 var state =  states.FALL
 var msg = []
 
@@ -85,6 +89,7 @@ func change_state(new_state):
 		states.DASH: exit_dash()
 		states.CROUCH: exit_crouch()
 		states.WALLSLIDE: exit_wallslide()
+		states.DODGEROLL: exit_dodgeroll()
 	
 	state = new_state
 	
@@ -95,6 +100,7 @@ func change_state(new_state):
 		states.DASH: enter_dash()
 		states.CROUCH: enter_crouch()
 		states.WALLSLIDE: enter_wallslide()
+		states.DODGEROLL: enter_dodgeroll()
 
 func _physics_process(delta):
 	
@@ -105,6 +111,7 @@ func _physics_process(delta):
 		states.DASH: dash(delta)
 		states.CROUCH: crouch(delta)
 		states.WALLSLIDE: wallslide(delta)
+		states.DODGEROLL: dodgeroll(delta)
 	
 	move_and_slide()
 
@@ -154,11 +161,25 @@ func enter_crouch():
 	hang_timer.stop()
 	body.position.y = -17
 	body.scale.y = 65.18
+	
 
 func enter_wallslide():
 	#label.text = "wallslide"
 	#print("wallslide")
 	if wallslide_resets_dash: dash_used = false
+
+func enter_dodgeroll():
+	#label.text = "dodgeroll"
+	#print("dodgeroll")
+	body.position.y = -17
+	body.scale.y = 65.18
+	dodge_time.start()
+	if Input.is_action_pressed("ls_right"): velocity.x = dodge_speed
+	elif Input.is_action_pressed("ls_left"): velocity.x = -dodge_speed
+	elif gun.flip_v == true: velocity.x = -dodge_speed
+	else: velocity.x = dodge_speed
+	set_collision_layer_value(1, false)
+	set_collision_mask_value(1, false)
 
 #endregion
 
@@ -178,6 +199,7 @@ func run(delta):
 	if ls_zone == 7 : change_state(states.CROUCH)
 	
 	if Input.is_action_just_pressed("dash"): change_state(states.DASH)
+	if Input.is_action_just_pressed("dodgeroll"): change_state(states.DODGEROLL)
 
 func jump(delta):
 	
@@ -256,6 +278,8 @@ func crouch(delta):
 		change_state(states.FALL)
 	
 	if not ls_zone == 7 : change_state(states.RUN)
+	
+	if Input.is_action_just_pressed("dodgeroll"): change_state(states.DODGEROLL)
 
 func wallslide(delta):
 	
@@ -278,8 +302,11 @@ func wallslide(delta):
 	
 	if Input.is_action_just_pressed("jump") or not jump_buffer.time_left == 0: change_state(states.JUMP)
 	elif  not is_on_wall(): change_state(states.FALL)
-	elif get_wall_normal().x == 1 and not Input.is_action_pressed("ls_left"): change_state(states.FALL)
-	elif get_wall_normal().x == -1 and not Input.is_action_pressed("ls_right"): change_state(states.FALL)
+	elif get_wall_normal().x == 1 and Input.is_action_pressed("ls_right"): change_state(states.FALL)
+	elif get_wall_normal().x == -1 and Input.is_action_pressed("ls_left"): change_state(states.FALL)
+
+func dodgeroll(delta):
+	if dodge_time.time_left == 0: change_state(states.RUN)
 
 #endregion
 
@@ -299,6 +326,12 @@ func exit_crouch():
 	body.scale.y = 108
 
 func exit_wallslide(): pass
+
+func exit_dodgeroll():
+	body.position.y = -38
+	body.scale.y = 108
+	set_collision_layer_value(1, true)
+	set_collision_mask_value(1, true)
 
 #endregion
 
@@ -385,29 +418,47 @@ func aim():
 		else:
 			ls_zone = 1
 
-
 func shoot():
+	 
+	if Input.is_action_pressed("shoot_heavy") and shoot_heavy_cooldown.time_left == 0: 
+		burst_used = true
+		bullets_shot = 0
 	
-	
-	if Input.is_action_pressed("shoot_heavy") and shoot_cooldown.time_left == 0: 
-		shoot_sfx.volume_db = -17.6
-		shoot_sfx.pitch_scale = randf_range(0.5,0.7)
-		shoot_sfx.play()
-		shoot_cooldown.start()
-		var this_bullet = bullet.instantiate()
-		get_parent().add_child(this_bullet)
-		this_bullet.global_position = blast_area.global_position
-		this_bullet.scale = Vector2(1.5,1.5)
-		this_bullet.rotation = gun.rotation
-		this_bullet.velocity = Vector2(cos(gun.rotation),sin(gun.rotation)) * - bullet_speed
-		if not state == states.CROUCH: 
-			velocity.x -= this_bullet.velocity.normalized().x * 600
-			velocity.y -= this_bullet.velocity.normalized().y * 600
+	if burst_used == true: 
 		Input.start_joy_vibration(0,0.4,0,0.1)
-	
-	
-	
-	
+		shoot_heavy_cooldown.start()
+		
+		if shoot_cooldown.time_left == 0 and bullets_shot < 3:
+			
+			shoot_sfx.volume_db = -17.6
+			shoot_sfx.pitch_scale = randf_range(0.5,0.7)
+			shoot_sfx.play()
+			var this_bullet = bullet.instantiate()
+			get_parent().add_child(this_bullet)
+			this_bullet.global_position = blast_area.global_position
+			this_bullet.scale = Vector2(1.5,1.5)
+			this_bullet.rotation = gun.rotation
+			this_bullet.velocity = Vector2(cos(gun.rotation),sin(gun.rotation)) * - bullet_speed
+			
+			if not state == states.CROUCH and not rs_zone == 7 and not rs_zone == 3: 
+				
+				match bullets_shot:
+					0: velocity = -this_bullet.velocity.normalized() * 750
+					1: velocity = -this_bullet.velocity.normalized() * 400
+					2: velocity = -this_bullet.velocity.normalized() * 900
+				
+			elif not state == states.CROUCH:
+				
+				match bullets_shot:
+					0: velocity.y = -this_bullet.velocity.normalized().y * 750
+					1: velocity.y = -this_bullet.velocity.normalized().y * 400
+					2: velocity.y = -this_bullet.velocity.normalized().y * 900
+			
+			bullets_shot += 1
+			shoot_cooldown.start()
+		elif bullets_shot == 3: 
+			burst_used = false
+			if not is_on_floor() and not is_on_wall(): change_state(states.FALL)
 	
 	if Input.is_action_pressed("shoot") and shoot_cooldown.time_left == 0: 
 		shoot_sfx.volume_db = -17.6
@@ -447,5 +498,10 @@ func move(current_speed, current_acceleration, current_deceleration, delta):
 		velocity.x = lerp(velocity.x, final_velocity, current_acceleration * delta)
 	else: 
 		velocity.x = lerp(velocity.x, final_velocity, current_deceleration * delta)
+	
+	print(velocity.x)
+
+func _on_hurtbox_body_shape_entered(body_rid: RID, body: Node2D, body_shape_index: int, local_shape_index: int) -> void:
+	position = Vector2(3221.0,10196.001)
 
 #endregion

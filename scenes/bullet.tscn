@@ -4,14 +4,13 @@
 script/source = "extends CharacterBody2D
 
 @onready var sprite_2d: Sprite2D = $Sprite2D
+@onready var area_2d: Area2D = $Area2D
 
 
 func _physics_process(delta: float) -> void: move_and_slide()
 
-func _on_area_2d_body_entered(body: Node2D) -> void: 
-	
-	sprite_2d.visible = false
-	queue_free()
+
+func _on_area_2d_body_entered(body: Node2D) -> void: queue_free()
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dubn7"]

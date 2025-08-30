@@ -1,7 +1,11 @@
+Timer
+CollisionShape2D
+Area2D
+TileMapLayer
+TileMap
 Label
 RichTextLabel
 StaticBody2D
-CollisionShape2D
 Sprite2D
 ParallaxLayer
 Parallax2D
