@@ -70,6 +70,7 @@ var ls_angle
 var ls_zone
 var dash_used:= false
 var burst_used:= false
+var burst_in_use := false
 var bullets_shot := 0
 
 #endregion
@@ -161,7 +162,6 @@ func enter_crouch():
 	hang_timer.stop()
 	body.position.y = -17
 	body.scale.y = 65.18
-	
 
 func enter_wallslide():
 	#label.text = "wallslide"
@@ -232,7 +232,6 @@ func jump(delta):
 		elif get_wall_normal().x == -1 and Input.is_action_pressed("ls_right"): change_state(states.WALLSLIDE)
 
 func fall(delta):
-	
 	
 	if not animations.current_animation == "blast": 
 		aim()
@@ -339,60 +338,62 @@ func exit_dodgeroll():
 
 func aim():
 	
-	if Input.get_axis("rs_left","rs_right") == 0 and Input.get_axis("rs_down","rs_up") == 0:
+	if not burst_used:
 		
-		if Input.is_action_pressed("ls_right"): 
-			gun.rotation = PI
-			rs_zone = 5
-		elif Input.is_action_pressed("ls_left"): 
-			gun.rotation = 0
-			rs_zone = 1
-		elif gun.flip_v == true: 
-			gun.rotation = 0
-			rs_zone = 1
-		else: 
-			gun.rotation = PI
-			rs_zone = 5
-		
-	else:
-		rs_angle = Vector2(0,0).angle_to_point(Vector2(Input.get_axis("rs_left","rs_right"),Input.get_axis("rs_down","rs_up")))
-		
-		if aiming == 0:
+		if Input.get_axis("rs_left","rs_right") == 0 and Input.get_axis("rs_down","rs_up") == 0:
 			
-			if rs_angle > 0.875 * PI:
-				gun.rotation = 0
-				rs_zone = 1
-			elif rs_angle > 0.625 * PI:
-				gun.rotation = 0.25 * PI
-				rs_zone = 2
-			elif rs_angle > 0.375 * PI:
-				gun.rotation = 0.5 * PI 
-				rs_zone = 3
-			elif rs_angle > 0.125 * PI:
-				gun.rotation = 0.75 * PI
-				rs_zone = 4
-			elif rs_angle > -0.125 * PI:
+			if Input.is_action_pressed("ls_right"): 
 				gun.rotation = PI
 				rs_zone = 5
-			elif rs_angle > -0.375 * PI:
-				gun.rotation = 1.25 * PI
-				rs_zone = 6
-			elif rs_angle > -0.625 * PI:
-				gun.rotation = 1.5 * PI
-				rs_zone = 7
-			elif rs_angle > -0.875 * PI:
-				gun.rotation = 1.75 * PI
-				rs_zone = 8
-			else:
+			elif Input.is_action_pressed("ls_left"): 
 				gun.rotation = 0
 				rs_zone = 1
+			elif gun.flip_v == true: 
+				gun.rotation = 0
+				rs_zone = 1
+			else: 
+				gun.rotation = PI
+				rs_zone = 5
 			
-		else: gun.rotation = PI - rs_angle
-	
-	if gun.flip_v == false: 
-		if gun.rotation < 1.5 or gun.rotation > 5: gun.flip_v = true
-	else: 
-		if gun.rotation < 4.5 and gun.rotation > 1.9: gun.flip_v = false
+		else:
+			rs_angle = Vector2(0,0).angle_to_point(Vector2(Input.get_axis("rs_left","rs_right"),Input.get_axis("rs_down","rs_up")))
+			
+			if aiming == 0:
+				
+				if rs_angle > 0.875 * PI:
+					gun.rotation = 0
+					rs_zone = 1
+				elif rs_angle > 0.625 * PI:
+					gun.rotation = 0.25 * PI
+					rs_zone = 2
+				elif rs_angle > 0.375 * PI:
+					gun.rotation = 0.5 * PI 
+					rs_zone = 3
+				elif rs_angle > 0.125 * PI:
+					gun.rotation = 0.75 * PI
+					rs_zone = 4
+				elif rs_angle > -0.125 * PI:
+					gun.rotation = PI
+					rs_zone = 5
+				elif rs_angle > -0.375 * PI:
+					gun.rotation = 1.25 * PI
+					rs_zone = 6
+				elif rs_angle > -0.625 * PI:
+					gun.rotation = 1.5 * PI
+					rs_zone = 7
+				elif rs_angle > -0.875 * PI:
+					gun.rotation = 1.75 * PI
+					rs_zone = 8
+				else:
+					gun.rotation = 0
+					rs_zone = 1
+				
+			else: gun.rotation = PI - rs_angle
+		
+		if gun.flip_v == false: 
+			if gun.rotation < 1.5 or gun.rotation > 5: gun.flip_v = true
+		else: 
+			if gun.rotation < 4.5 and gun.rotation > 1.9: gun.flip_v = false
 	
 	if Input.get_axis("ls_left","ls_right") == 0 and Input.get_axis("ls_down","ls_up") == 0: 
 		ls_zone = 0
@@ -420,11 +421,16 @@ func aim():
 
 func shoot():
 	 
+	if state == states.RUN or state == states.WALLSLIDE: burst_used = false
+	
 	if Input.is_action_pressed("shoot_heavy") and shoot_heavy_cooldown.time_left == 0: 
-		burst_used = true
+		burst_in_use = true
 		bullets_shot = 0
 	
-	if burst_used == true: 
+	if burst_in_use == true and not burst_used: 
+		
+		
+		if not is_on_floor() and not is_on_wall(): change_state(states.FALL)
 		Input.start_joy_vibration(0,0.4,0,0.1)
 		shoot_heavy_cooldown.start()
 		
@@ -440,25 +446,19 @@ func shoot():
 			this_bullet.rotation = gun.rotation
 			this_bullet.velocity = Vector2(cos(gun.rotation),sin(gun.rotation)) * - bullet_speed
 			
-			if not state == states.CROUCH and not rs_zone == 7 and not rs_zone == 3: 
+			if not is_on_floor() and not is_on_wall() and rs_zone == 7: 
 				
 				match bullets_shot:
-					0: velocity = -this_bullet.velocity.normalized() * 750
-					1: velocity = -this_bullet.velocity.normalized() * 400
-					2: velocity = -this_bullet.velocity.normalized() * 900
-				
-			elif not state == states.CROUCH:
-				
-				match bullets_shot:
-					0: velocity.y = -this_bullet.velocity.normalized().y * 750
+					0: velocity.y = -this_bullet.velocity.normalized().y * 900
 					1: velocity.y = -this_bullet.velocity.normalized().y * 400
-					2: velocity.y = -this_bullet.velocity.normalized().y * 900
+					2: velocity.y = -this_bullet.velocity.normalized().y * 750
 			
 			bullets_shot += 1
 			shoot_cooldown.start()
+			
 		elif bullets_shot == 3: 
-			burst_used = false
-			if not is_on_floor() and not is_on_wall(): change_state(states.FALL)
+			burst_used = true
+			burst_in_use = false
 	
 	if Input.is_action_pressed("shoot") and shoot_cooldown.time_left == 0: 
 		shoot_sfx.volume_db = -17.6
@@ -498,8 +498,6 @@ func move(current_speed, current_acceleration, current_deceleration, delta):
 		velocity.x = lerp(velocity.x, final_velocity, current_acceleration * delta)
 	else: 
 		velocity.x = lerp(velocity.x, final_velocity, current_deceleration * delta)
-	
-	print(velocity.x)
 
 func _on_hurtbox_body_shape_entered(body_rid: RID, body: Node2D, body_shape_index: int, local_shape_index: int) -> void:
 	position = Vector2(3221.0,10196.001)
