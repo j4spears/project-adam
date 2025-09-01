@@ -36,14 +36,18 @@ enum variable_jump_type {none, smooth, sharp}
 enum aiming_type {discrete, continuous}
 @export var aiming = aiming_type.discrete
 
-
+@export_category("Abilities")
+@export var has_dash: bool = true
+@export var has_burst: bool = true
+@export var has_wallslide: bool = true
+@export var has_aiming_schematic: bool = true
 
 @onready var hang_timer: Timer = $Timers/HangTime
 @onready var jump_buffer: Timer = $Timers/JumpBuffer
 @onready var cayote_time: Timer = $Timers/CayoteTime
 @onready var dash_time: Timer = $Timers/DashTime
 @onready var shoot_cooldown: Timer = $Timers/ShootCooldown
-@onready var shoot_heavy_cooldown: Timer = $Timers/ShootHeavyCooldown
+@onready var burst_cooldown: Timer = $Timers/BurstCooldown
 @onready var dodge_time: Timer = $Timers/DodgeTime
 
 @onready var blast_sfx: AudioStreamPlayer = $Sfx/Blast
@@ -198,7 +202,7 @@ func run(delta):
 	
 	if ls_zone == 7 : change_state(states.CROUCH)
 	
-	if Input.is_action_just_pressed("dash"): change_state(states.DASH)
+	if Input.is_action_just_pressed("dash") and has_dash: change_state(states.DASH)
 	if Input.is_action_just_pressed("dodgeroll"): change_state(states.DODGEROLL)
 
 func jump(delta):
@@ -224,10 +228,10 @@ func jump(delta):
 	
 	if Input.is_action_just_pressed("jump"): jump_buffer.start()
 	
-	if Input.is_action_just_pressed("dash") and not dash_used: change_state(states.DASH)
+	if Input.is_action_just_pressed("dash") and not dash_used and has_dash: change_state(states.DASH)
 	
 	if is_on_floor(): change_state(states.RUN)
-	elif is_on_wall(): 
+	elif is_on_wall() and has_wallslide: 
 		if get_wall_normal().x == 1 and Input.is_action_pressed("ls_left"): change_state(states.WALLSLIDE)
 		elif get_wall_normal().x == -1 and Input.is_action_pressed("ls_right"): change_state(states.WALLSLIDE)
 
@@ -245,10 +249,10 @@ func fall(delta):
 		jump_buffer.start()
 		if not cayote_time.time_left == 0: change_state(states.JUMP)
 	
-	if Input.is_action_just_pressed("dash") and not dash_used: change_state(states.DASH)
+	if Input.is_action_just_pressed("dash") and not dash_used and has_dash: change_state(states.DASH)
 	
 	if is_on_floor(): change_state(states.RUN)
-	elif is_on_wall(): 
+	elif is_on_wall() and has_wallslide: 
 		if get_wall_normal().x == 1 and Input.is_action_pressed("ls_left"): change_state(states.WALLSLIDE)
 		elif get_wall_normal().x == -1 and Input.is_action_pressed("ls_right"): change_state(states.WALLSLIDE)
 
@@ -264,7 +268,7 @@ func crouch(delta):
 	
 	move(crouch_speed, acceleration, deceleration, delta)
 	
-	if Input.is_action_just_pressed("dash"): 
+	if Input.is_action_just_pressed("dash") and has_dash: 
 		animations.play("blast")
 		blast_collision.disabled = false
 		blast_sfx.play()
@@ -297,7 +301,7 @@ func wallslide(delta):
 	
 	if is_on_floor(): change_state(states.RUN)
 	
-	if wallslide_resets_dash and Input.is_action_just_pressed("dash"): change_state(states.DASH)
+	if wallslide_resets_dash and Input.is_action_just_pressed("dash") and has_dash: change_state(states.DASH)
 	
 	if Input.is_action_just_pressed("jump") or not jump_buffer.time_left == 0: change_state(states.JUMP)
 	elif  not is_on_wall(): change_state(states.FALL)
@@ -363,25 +367,25 @@ func aim():
 				if rs_angle > 0.875 * PI:
 					gun.rotation = 0
 					rs_zone = 1
-				elif rs_angle > 0.625 * PI:
+				elif rs_angle > 0.625 * PI and has_aiming_schematic:
 					gun.rotation = 0.25 * PI
 					rs_zone = 2
-				elif rs_angle > 0.375 * PI:
+				elif rs_angle > 0.375 * PI and has_aiming_schematic:
 					gun.rotation = 0.5 * PI 
 					rs_zone = 3
-				elif rs_angle > 0.125 * PI:
+				elif rs_angle > 0.125 * PI and has_aiming_schematic:
 					gun.rotation = 0.75 * PI
 					rs_zone = 4
 				elif rs_angle > -0.125 * PI:
 					gun.rotation = PI
 					rs_zone = 5
-				elif rs_angle > -0.375 * PI:
+				elif rs_angle > -0.375 * PI and has_aiming_schematic:
 					gun.rotation = 1.25 * PI
 					rs_zone = 6
-				elif rs_angle > -0.625 * PI:
+				elif rs_angle > -0.625 * PI and has_aiming_schematic:
 					gun.rotation = 1.5 * PI
 					rs_zone = 7
-				elif rs_angle > -0.875 * PI:
+				elif rs_angle > -0.875 * PI and has_aiming_schematic:
 					gun.rotation = 1.75 * PI
 					rs_zone = 8
 				else:
@@ -423,16 +427,15 @@ func shoot():
 	 
 	if state == states.RUN or state == states.WALLSLIDE: burst_used = false
 	
-	if Input.is_action_pressed("shoot_heavy") and shoot_heavy_cooldown.time_left == 0: 
+	if Input.is_action_pressed("burst") and burst_cooldown.time_left == 0 and has_burst: 
 		burst_in_use = true
 		bullets_shot = 0
 	
 	if burst_in_use == true and not burst_used: 
 		
-		
 		if not is_on_floor() and not is_on_wall(): change_state(states.FALL)
 		Input.start_joy_vibration(0,0.4,0,0.1)
-		shoot_heavy_cooldown.start()
+		burst_cooldown.start()
 		
 		if shoot_cooldown.time_left == 0 and bullets_shot < 3:
 			

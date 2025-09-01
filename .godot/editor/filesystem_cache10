@@ -1,12 +1,12 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1756571218
+::res://::1756727213
 README.md::TextFile/TextFile::-1::1755612145::0::1::::<><><>0<>0<><>::
-::res://scenes/::1756545723
-bullet.tscn::PackedScene::8650549807043203835::1756545723::0::1::::<><><>0<>0<><>::
-moveable_object.tscn::PackedScene::127278546393247753::1756545723::0::1::::<><><>0<>0<><>::
+::res://scenes/::1756579919
+bullet.tscn::PackedScene::8650549807043203835::1756579919::0::1::::<><><>0<>0<><>::
+moveable_object.tscn::PackedScene::127278546393247753::1756579919::0::1::::<><><>0<>0<><>::
 moveable_platform.tscn::PackedScene/PackedScene::6027332260110262589::1755611387::0::1::::<><><>0<>0<><>::
-node_2d.tscn::PackedScene::1989524366856261715::1756545723::0::1::::<><><>0<>0<><>::uid://xucek1uimjn4::::res://sprites/blue block.png<>uid://281mv731mrwk::::res://sprites/temp spikes.png<>uid://dhh73j14bcckl::::res://scenes/player.tres.gd<>uid://cmh12h7a2r7mp::::res://sprites/gun.png<>uid://b2wi2qh3scj6::::res://scenes/moveable_object.tscn<>uid://cr4xjtwyinby8::::res://scenes/moveable_platform.tscn<>uid://b4qgu67y3iqm3::::res://sounds/blastsfx.wav<>uid://b4e85f646ygxu::::res://sounds/jump.wav<>uid://dy7amfwp6u7o7::::res://sprites/cave layer 5.png<>uid://dbatx2q73mmiv::::res://sprites/cave layer 4.png<>uid://bi05urmfuo3of::::res://sprites/cave layer 3.png<>uid://ch7nbeugrnxqy::::res://sprites/cave layer 2.png<>uid://7ud6lboc3qs5::::res://sprites/blastvfx.png<>uid://cbj7pccj2oaqh::::res://sounds/shootsfx.wav<>uid://um17mry84jor::::res://sprites/cave layer 1.png
-player.tres.gd::GDScript::7667028061015923239::1756545723::0::1::::<>CharacterBody2D<><>0<>0<><>::
+node_2d.tscn::PackedScene::1989524366856261715::1756579919::0::1::::<><><>0<>0<><>::uid://xucek1uimjn4::::res://sprites/blue block.png<>uid://281mv731mrwk::::res://sprites/temp spikes.png<>uid://dhh73j14bcckl::::res://scenes/player.tres.gd<>uid://cmh12h7a2r7mp::::res://sprites/gun.png<>uid://b2wi2qh3scj6::::res://scenes/moveable_object.tscn<>uid://cr4xjtwyinby8::::res://scenes/moveable_platform.tscn<>uid://b4qgu67y3iqm3::::res://sounds/blastsfx.wav<>uid://b4e85f646ygxu::::res://sounds/jump.wav<>uid://dy7amfwp6u7o7::::res://sprites/cave layer 5.png<>uid://dbatx2q73mmiv::::res://sprites/cave layer 4.png<>uid://bi05urmfuo3of::::res://sprites/cave layer 3.png<>uid://ch7nbeugrnxqy::::res://sprites/cave layer 2.png<>uid://7ud6lboc3qs5::::res://sprites/blastvfx.png<>uid://cbj7pccj2oaqh::::res://sounds/shootsfx.wav<>uid://um17mry84jor::::res://sprites/cave layer 1.png
+player.tres.gd::GDScript::7667028061015923239::1756573090::0::1::::<>CharacterBody2D<><>0<>0<><>::
 spaceship render 1 tileset.tres .tres::TileSet/TileSet::6113900460631539053::1756322271::0::1::::<><><>0<>0<><>::uid://dbq3uxt3k2itd::::res://sprites/spaceship render 1 tilesheet.png
 ::res://sounds/::1755612425
 blastsfx - 26:07:2025, 17.36.wav::AudioStreamWAV/AudioStreamWAV::2641922486603351036::1753583129::1755612425::1::::<><><>0<>0<>08f421a2b36901f05a4ca52b706e0d6e<>res://.godot/imported/blastsfx - 26:07:2025, 17.36.wav-3c9bfd7c79db66c1bfa7b8f2ac8894b5.sample::

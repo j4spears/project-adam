@@ -336,7 +336,7 @@ one_shot = true
 wait_time = 0.1
 one_shot = true
 
-[node name="ShootHeavyCooldown" type="Timer" parent="Player/Timers"]
+[node name="BurstCooldown" type="Timer" parent="Player/Timers"]
 wait_time = 0.75
 one_shot = true
 
