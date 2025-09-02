@@ -1,4 +1,6 @@
 res://scenes/node_2d.tscn
-res://addons/asset_dock/asset_dock.gd
 res://scenes/bullet.tscn
 res://scenes/moveable_object.tscn
+res://addons/asset_dock/asset_dock.gd
+res://scenes/player.tres.gd
+res://scenes/blast_vfx.tscn

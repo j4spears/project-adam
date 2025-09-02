@@ -63,8 +63,9 @@ enum aiming_type {discrete, continuous}
 @onready var label: Label = $Label
 
 
+const blast_vfx = preload("res://scenes/blast_vfx.tscn")
+const bullet = preload("res://scenes/bullet.tscn")
 
-var bullet = preload("res://scenes/bullet.tscn")
 
 var final_velocity
 var previous_state
@@ -149,7 +150,11 @@ func enter_fall():
 func enter_dash(): 
 	#label.text = "dash"
 	#print("dash")
-	animations.play("blast")
+	var this_blast_vfx = blast_vfx.instantiate()
+	get_parent().add_child(this_blast_vfx)
+	this_blast_vfx.global_position = blast_area.global_position
+	this_blast_vfx.rotation = gun.rotation
+	this_blast_vfx.get_node("Sprite2D/AnimationPlayer").play("blast")
 	blast_sfx.play()
 	dash_used = true
 	hang_timer.stop()
@@ -191,9 +196,8 @@ func enter_dodgeroll():
 
 func run(delta):
 	
-	if not animations.current_animation == "blast": 
-		aim()
-		shoot()
+	aim()
+	shoot()
 	
 	move(speed, acceleration, deceleration, delta)
 	
@@ -207,9 +211,8 @@ func run(delta):
 
 func jump(delta):
 	
-	if not animations.current_animation == "blast": 
-		aim()
-		shoot()
+	aim()
+	shoot()
 	
 	move(speed, airborne_acceleration, airborne_deceleration, delta)
 	
@@ -237,9 +240,8 @@ func jump(delta):
 
 func fall(delta):
 	
-	if not animations.current_animation == "blast": 
-		aim()
-		shoot()
+	aim()
+	shoot()
 	
 	if velocity.y < max_fall_speed: velocity.y += descend
 	
@@ -262,14 +264,17 @@ func dash(delta):
 
 func crouch(delta):
 	
-	if not animations.current_animation == "blast": 
-		aim()
-		shoot()
+	aim()
+	shoot()
 	
 	move(crouch_speed, acceleration, deceleration, delta)
 	
 	if Input.is_action_just_pressed("dash") and has_dash: 
-		animations.play("blast")
+		var this_blast_vfx = blast_vfx.instantiate()
+		get_parent().add_child(this_blast_vfx)
+		this_blast_vfx.global_position = blast_area.global_position
+		this_blast_vfx.rotation = gun.rotation
+		this_blast_vfx.get_node("Sprite2D/AnimationPlayer").play("blast")
 		blast_collision.disabled = false
 		blast_sfx.play()
 		Input.start_joy_vibration(0,0.8,0.8,0.175)
@@ -342,7 +347,7 @@ func exit_dodgeroll():
 
 func aim():
 	
-	if not burst_used:
+	if not burst_in_use:
 		
 		if Input.get_axis("rs_left","rs_right") == 0 and Input.get_axis("rs_down","rs_up") == 0:
 			
@@ -427,11 +432,11 @@ func shoot():
 	 
 	if state == states.RUN or state == states.WALLSLIDE: burst_used = false
 	
-	if Input.is_action_pressed("burst") and burst_cooldown.time_left == 0 and has_burst: 
+	if Input.is_action_pressed("burst") and burst_cooldown.time_left == 0 and has_burst and not burst_used: 
 		burst_in_use = true
 		bullets_shot = 0
 	
-	if burst_in_use == true and not burst_used: 
+	if burst_in_use == true: 
 		
 		if not is_on_floor() and not is_on_wall(): change_state(states.FALL)
 		Input.start_joy_vibration(0,0.4,0,0.1)
