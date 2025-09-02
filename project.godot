@@ -23,6 +23,10 @@ window/size/initial_position_type=3
 window/size/resizable=false
 window/stretch/mode="viewport"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/asset_dock/plugin.cfg")
+
 [input]
 
 ui_accept={
@@ -127,4 +131,4 @@ dodgeroll={
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.171039, 0.171039, 0.171039, 1)
+environment/defaults/default_clear_color=Color(0.257476, 0.257476, 0.257476, 1)
