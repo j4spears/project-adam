@@ -23,10 +23,6 @@ window/size/initial_position_type=3
 window/size/resizable=false
 window/stretch/mode="viewport"
 
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/asset_dock/plugin.cfg")
-
 [input]
 
 ui_accept={

@@ -1,20 +1,15 @@
-[gd_scene load_steps=33 format=4 uid="uid://3l0f8bybwa32"]
+[gd_scene load_steps=23 format=4 uid="uid://3l0f8bybwa32"]
 
 [ext_resource type="Texture2D" uid="uid://xucek1uimjn4" path="res://sprites/blue block.png" id="2_rnjyy"]
 [ext_resource type="Texture2D" uid="uid://281mv731mrwk" path="res://sprites/temp spikes.png" id="2_xtx0q"]
-[ext_resource type="Script" uid="uid://dhh73j14bcckl" path="res://scenes/player.tres.gd" id="3_04qyp"]
-[ext_resource type="Texture2D" uid="uid://cmh12h7a2r7mp" path="res://sprites/gun.png" id="3_rnjyy"]
 [ext_resource type="PackedScene" uid="uid://b2wi2qh3scj6" path="res://scenes/moveable_object.tscn" id="4_4vge2"]
 [ext_resource type="PackedScene" uid="uid://cr4xjtwyinby8" path="res://scenes/moveable_platform.tscn" id="4_dubn7"]
-[ext_resource type="AudioStream" uid="uid://b4qgu67y3iqm3" path="res://sounds/blastsfx.wav" id="4_hh0fu"]
-[ext_resource type="AudioStream" uid="uid://b4e85f646ygxu" path="res://sounds/jump.wav" id="5_fws66"]
 [ext_resource type="Texture2D" uid="uid://dy7amfwp6u7o7" path="res://sprites/cave layer 5.png" id="5_xtx0q"]
 [ext_resource type="Texture2D" uid="uid://dbatx2q73mmiv" path="res://sprites/cave layer 4.png" id="6_3kg8w"]
 [ext_resource type="Texture2D" uid="uid://bi05urmfuo3of" path="res://sprites/cave layer 3.png" id="7_x63s8"]
 [ext_resource type="Texture2D" uid="uid://ch7nbeugrnxqy" path="res://sprites/cave layer 2.png" id="8_0q20i"]
-[ext_resource type="AudioStream" uid="uid://cbj7pccj2oaqh" path="res://sounds/shootsfx.wav" id="9_08kqv"]
 [ext_resource type="Texture2D" uid="uid://um17mry84jor" path="res://sprites/cave layer 1.png" id="9_qv8l0"]
-[ext_resource type="PackedScene" uid="uid://diuugej7ndmxk" path="res://scenes/blast_vfx.tscn" id="16_3kg8w"]
+[ext_resource type="PackedScene" uid="uid://b1ej7tjms2vft" path="res://scenes/player.tscn" id="10_dubn7"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_dubn7"]
 polygon = PackedVector2Array(-8, 8, -8, -8, 8, -8, 8, 8)
@@ -74,23 +69,6 @@ _data = {
 }
 point_count = 2
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6e84v"]
-size = Vector2(17.5, 33.75)
-
-[sub_resource type="Gradient" id="Gradient_4dvvg"]
-offsets = PackedFloat32Array(0.0130208)
-colors = PackedColorArray(1, 0.998863, 0.88142, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_rnjyy"]
-gradient = SubResource("Gradient_4dvvg")
-width = 1
-
-[sub_resource type="LabelSettings" id="LabelSettings_xtx0q"]
-font_size = 63
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3kg8w"]
-size = Vector2(46.0654, 95.0811)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xtx0q"]
 size = Vector2(9113, 1356)
 
@@ -107,7 +85,7 @@ tile_map_data = PackedByteArray("AACYACsAAAABAAAAAACZACsAAAABAAAAAACaACsAAAABAAA
 tile_set = SubResource("TileSet_x63s8")
 
 [node name="MoveableObject" parent="." instance=ExtResource("4_4vge2")]
-position = Vector2(288, 10452)
+position = Vector2(1726, 10669)
 
 [node name="MoveableObject2" parent="." instance=ExtResource("4_4vge2")]
 position = Vector2(1960, 10634)
@@ -227,136 +205,8 @@ texture = ExtResource("8_0q20i")
 [node name="Sprite2D" type="Sprite2D" parent="Cave/ParallaxLayer"]
 texture = ExtResource("9_qv8l0")
 
-[node name="Player" type="CharacterBody2D" parent="."]
-physics_interpolation_mode = 2
-top_level = true
+[node name="Player" parent="." instance=ExtResource("10_dubn7")]
 position = Vector2(2255, 10561)
-scale = Vector2(0.61, 0.61)
-collision_layer = 3
-collision_mask = 3
-platform_on_leave = 2
-script = ExtResource("3_04qyp")
-acceleration = 15
-deceleration = 15
-variable_speed = 1
-jump_force = 800
-airborne_acceleration = 10
-airborne_deceleration = 4
-hang_time = true
-max_fall_speed = 1500
-ascend = 40
-descend = 75
-wallslide_speed = 250
-wall_jump_distance = 500
-wallslide_resets_dash = true
-bullet_speed = 2000.0
-bullet_knockback = 1000
-dash_speed = 1200.0
-
-[node name="Timers" type="Node" parent="Player"]
-
-[node name="HangTime" type="Timer" parent="Player/Timers"]
-wait_time = 0.05
-one_shot = true
-
-[node name="JumpBuffer" type="Timer" parent="Player/Timers"]
-wait_time = 0.1
-one_shot = true
-
-[node name="CayoteTime" type="Timer" parent="Player/Timers"]
-wait_time = 0.05
-one_shot = true
-
-[node name="DashTime" type="Timer" parent="Player/Timers"]
-wait_time = 0.05
-one_shot = true
-
-[node name="ShootCooldown" type="Timer" parent="Player/Timers"]
-wait_time = 0.1
-one_shot = true
-
-[node name="BurstCooldown" type="Timer" parent="Player/Timers"]
-wait_time = 0.75
-one_shot = true
-
-[node name="DodgeTime" type="Timer" parent="Player/Timers"]
-wait_time = 0.25
-one_shot = true
-
-[node name="Sfx" type="Node" parent="Player"]
-
-[node name="Blast" type="AudioStreamPlayer" parent="Player/Sfx"]
-stream = ExtResource("4_hh0fu")
-
-[node name="Jump" type="AudioStreamPlayer" parent="Player/Sfx"]
-stream = ExtResource("5_fws66")
-volume_db = -10.0
-
-[node name="Shoot" type="AudioStreamPlayer" parent="Player/Sfx"]
-stream = ExtResource("9_08kqv")
-volume_db = -17.6
-pitch_scale = 1.18
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
-position = Vector2(12, -38)
-scale = Vector2(3.2, 3.2)
-shape = SubResource("RectangleShape2D_6e84v")
-
-[node name="Body" type="Sprite2D" parent="Player"]
-texture_repeat = 2
-position = Vector2(12.2969, -38)
-scale = Vector2(-56.594, 108)
-texture = SubResource("GradientTexture1D_rnjyy")
-region_rect = Rect2(0, 0, 64, 128)
-
-[node name="Gun" type="Sprite2D" parent="Player"]
-position = Vector2(14, -22)
-rotation = 3.14159
-scale = Vector2(0.360001, -0.36)
-texture = ExtResource("3_rnjyy")
-offset = Vector2(-108.58, 2.81)
-region_enabled = true
-region_rect = Rect2(192, 344, 616, 240)
-
-[node name="BlastArea" type="Area2D" parent="Player/Gun"]
-position = Vector2(-377.777, 16.6678)
-rotation = 3.14159
-scale = Vector2(2.77777, -2.77778)
-
-[node name="BlastCollision" type="CollisionPolygon2D" parent="Player/Gun/BlastArea"]
-position = Vector2(24, -12)
-polygon = PackedVector2Array(-24, 15.9999, 30, -76, 232, -114, 320, 8, 234, 130, 26, 88)
-disabled = true
-
-[node name="Camera2D" type="Camera2D" parent="Player"]
-offset = Vector2(0, -50.63)
-zoom = Vector2(1.55, 1.55)
-position_smoothing_enabled = true
-position_smoothing_speed = 10.0
-drag_horizontal_enabled = true
-drag_vertical_enabled = true
-drag_left_margin = 0.05
-drag_top_margin = 0.05
-drag_right_margin = 0.05
-drag_bottom_margin = 0.02
-
-[node name="Label" type="Label" parent="Player"]
-visible = false
-offset_left = -21.3115
-offset_top = -183.607
-offset_right = 62.6885
-offset_bottom = -50.6066
-text = "fall
-"
-label_settings = SubResource("LabelSettings_xtx0q")
-
-[node name="Hurtbox" type="Area2D" parent="Player"]
-position = Vector2(0, -50.8213)
-collision_mask = 4
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Hurtbox"]
-position = Vector2(13.0327, 13.1152)
-shape = SubResource("RectangleShape2D_3kg8w")
 
 [node name="CaveFloor" type="StaticBody2D" parent="."]
 visible = false
@@ -364,7 +214,3 @@ position = Vector2(-103, 1708)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CaveFloor"]
 shape = SubResource("RectangleShape2D_xtx0q")
-
-[node name="BlastVfx" parent="." instance=ExtResource("16_3kg8w")]
-
-[connection signal="body_shape_entered" from="Player/Hurtbox" to="Player" method="_on_hurtbox_body_shape_entered"]

@@ -82,7 +82,7 @@ func ground(delta):
 	
 	if not is_on_floor(): change_state(states.AIR)
 
-func blasted(delta):
+func blasted(_delta):
 	if player.dash_time.time_left == 0: change_state(states.AIR)
 
 #endregion

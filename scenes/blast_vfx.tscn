@@ -1,6 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://diuugej7ndmxk"]
+[gd_scene load_steps=7 format=3 uid="uid://diuugej7ndmxk"]
 
 [ext_resource type="Texture2D" uid="uid://7ud6lboc3qs5" path="res://sprites/blastvfx.png" id="1_abr51"]
+[ext_resource type="AudioStream" uid="uid://b4qgu67y3iqm3" path="res://sounds/blastsfx.wav" id="2_8by4n"]
+
+[sub_resource type="GDScript" id="GDScript_vweji"]
+script/source = "extends Node2D
+
+@onready var gun = get_parent().get_node(\"Player/Gun\")
+@onready var blast_area = gun.get_node(\"BlastArea\")
+@onready var animation_player: AnimationPlayer = $Sprite2D/AnimationPlayer
+@onready var blast_sfx: AudioStreamPlayer = $Blast
+
+func _ready() -> void:
+	global_position = blast_area.global_position
+	rotation = gun.rotation
+	animation_player.play(\"blast\")
+	blast_sfx.play()
+
+func _on_animation_player_animation_finished(_anim_name: StringName) -> void: queue_free()
+"
 
 [sub_resource type="Animation" id="Animation_08kqv"]
 length = 0.001
@@ -15,18 +33,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [0]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_dubn7"]
@@ -44,18 +50,6 @@ tracks/0/keys = {
 "update": 1,
 "values": [1, 2, 3, 6, 5, 7]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_f6ptj"]
 _data = {
@@ -64,9 +58,9 @@ _data = {
 }
 
 [node name="BlastVfx" type="Node2D"]
+script = SubResource("GDScript_vweji")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-visible = false
 z_index = 1
 position = Vector2(-159, 6)
 rotation = -1.5708
@@ -74,9 +68,14 @@ scale = Vector2(5, 5)
 texture = ExtResource("1_abr51")
 flip_h = true
 hframes = 8
-frame = 1
+frame = 7
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
 libraries = {
 &"": SubResource("AnimationLibrary_f6ptj")
 }
+
+[node name="Blast" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_8by4n")
+
+[connection signal="animation_finished" from="Sprite2D/AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

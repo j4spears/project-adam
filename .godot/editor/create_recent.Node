@@ -1,5 +1,10 @@
-Node2D
 Timer
+GPUParticles2D
+RayCast2D
+RigidBody2D
+AudioStreamPlayer
+CharacterBody2D
+Node2D
 CollisionShape2D
 Area2D
 TileMapLayer
@@ -7,6 +12,3 @@ TileMap
 Label
 RichTextLabel
 StaticBody2D
-Sprite2D
-ParallaxLayer
-Parallax2D

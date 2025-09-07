@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b5austvlmmjm"
-path="res://.godot/imported/Logo.png-3f727bc575b71196031e5024c4a29f71.ctex"
+uid="uid://eelba1qqg527"
+path="res://.godot/imported/burst bullet.png-77aae2f4873cd4291c42537ad3ffca23.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Logo.png"
-dest_files=["res://.godot/imported/Logo.png-3f727bc575b71196031e5024c4a29f71.ctex"]
+source_file="res://sprites/burst bullet.png"
+dest_files=["res://.godot/imported/burst bullet.png-77aae2f4873cd4291c42537ad3ffca23.ctex"]
 
 [params]
 

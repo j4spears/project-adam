@@ -1,0 +1,158 @@
+[gd_scene load_steps=11 format=3 uid="uid://b1ej7tjms2vft"]
+
+[ext_resource type="Script" uid="uid://dhh73j14bcckl" path="res://scenes/player.tres.gd" id="1_qlg0r"]
+[ext_resource type="AudioStream" uid="uid://b4qgu67y3iqm3" path="res://sounds/blastsfx.wav" id="2_tuyoq"]
+[ext_resource type="AudioStream" uid="uid://b4e85f646ygxu" path="res://sounds/jump.wav" id="3_fjrip"]
+[ext_resource type="AudioStream" uid="uid://cbj7pccj2oaqh" path="res://sounds/shootsfx.wav" id="4_smehm"]
+[ext_resource type="Texture2D" uid="uid://cmh12h7a2r7mp" path="res://sprites/gun.png" id="5_ur7pv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6e84v"]
+size = Vector2(17.5, 33.75)
+
+[sub_resource type="Gradient" id="Gradient_4dvvg"]
+offsets = PackedFloat32Array(0.0130208)
+colors = PackedColorArray(1, 0.998863, 0.88142, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_rnjyy"]
+gradient = SubResource("Gradient_4dvvg")
+width = 1
+
+[sub_resource type="LabelSettings" id="LabelSettings_xtx0q"]
+font_size = 63
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3kg8w"]
+size = Vector2(46.0654, 95.0811)
+
+[node name="Player" type="CharacterBody2D"]
+physics_interpolation_mode = 2
+top_level = true
+scale = Vector2(0.61, 0.61)
+collision_layer = 3
+collision_mask = 3
+platform_on_leave = 2
+script = ExtResource("1_qlg0r")
+acceleration = 15
+deceleration = 15
+jump_force = 800
+airborne_acceleration = 10
+airborne_deceleration = 4
+hang_time = true
+max_fall_speed = 1500
+ascend = 40
+descend = 75
+wallslide_speed = 250
+wall_jump_distance = 500
+bullet_speed = 2000.0
+bullet_knockback = 1000
+dash_speed = 1200.0
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="HangTime" type="Timer" parent="Timers"]
+wait_time = 0.05
+one_shot = true
+
+[node name="JumpBuffer" type="Timer" parent="Timers"]
+wait_time = 0.1
+one_shot = true
+
+[node name="CayoteTime" type="Timer" parent="Timers"]
+wait_time = 0.05
+one_shot = true
+
+[node name="DashTime" type="Timer" parent="Timers"]
+wait_time = 0.05
+one_shot = true
+
+[node name="ShootCooldown" type="Timer" parent="Timers"]
+wait_time = 0.1
+one_shot = true
+
+[node name="BurstCooldown" type="Timer" parent="Timers"]
+wait_time = 0.75
+one_shot = true
+
+[node name="DodgeTime" type="Timer" parent="Timers"]
+wait_time = 0.25
+one_shot = true
+
+[node name="Sfx" type="Node" parent="."]
+
+[node name="Blast" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("2_tuyoq")
+
+[node name="Jump" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("3_fjrip")
+volume_db = -10.0
+
+[node name="Bullet" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("4_smehm")
+volume_db = -17.6
+pitch_scale = 1.18
+
+[node name="BurstBullet" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("4_smehm")
+volume_db = -17.6
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(12, -38)
+scale = Vector2(3.2, 3.2)
+shape = SubResource("RectangleShape2D_6e84v")
+
+[node name="Body" type="Sprite2D" parent="."]
+texture_repeat = 2
+position = Vector2(12.2969, -38)
+scale = Vector2(-56.594, 108)
+texture = SubResource("GradientTexture1D_rnjyy")
+region_rect = Rect2(0, 0, 64, 128)
+
+[node name="Gun" type="Sprite2D" parent="."]
+position = Vector2(14, -22)
+rotation = 3.14159
+scale = Vector2(0.360001, -0.36)
+texture = ExtResource("5_ur7pv")
+offset = Vector2(-108.58, 2.81)
+region_enabled = true
+region_rect = Rect2(192, 344, 616, 240)
+
+[node name="BlastArea" type="Area2D" parent="Gun"]
+position = Vector2(-377.777, 16.6678)
+rotation = 3.14159
+scale = Vector2(2.77777, -2.77778)
+
+[node name="BlastCollision" type="CollisionPolygon2D" parent="Gun/BlastArea"]
+position = Vector2(24, -12)
+polygon = PackedVector2Array(-24, 15.9999, 30, -76, 232, -114, 320, 8, 234, 130, 26, 88)
+disabled = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(0, -50.63)
+zoom = Vector2(1.55, 1.55)
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.05
+drag_top_margin = 0.05
+drag_right_margin = 0.05
+drag_bottom_margin = 0.02
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = -21.3115
+offset_top = -183.607
+offset_right = 62.6885
+offset_bottom = -50.6066
+text = "fall
+"
+label_settings = SubResource("LabelSettings_xtx0q")
+
+[node name="Hurtbox" type="Area2D" parent="."]
+position = Vector2(0, -50.8213)
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(13.0327, 13.1133)
+shape = SubResource("RectangleShape2D_3kg8w")
+
+[connection signal="body_shape_entered" from="Hurtbox" to="." method="_on_hurtbox_body_shape_entered"]

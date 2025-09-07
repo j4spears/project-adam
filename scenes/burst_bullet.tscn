@@ -1,0 +1,48 @@
+[gd_scene load_steps=4 format=3 uid="uid://dystjvg6ein6g"]
+
+[ext_resource type="Texture2D" uid="uid://eelba1qqg527" path="res://sprites/burst bullet.png" id="1_f12ar"]
+
+[sub_resource type="GDScript" id="GDScript_18tek"]
+script/source = "extends CharacterBody2D
+
+@export var speed = 2000
+
+@onready var gun = get_parent().get_node(\"Player/Gun\")
+@onready var blast_area = gun.get_node(\"BlastArea\")
+@onready var sprite_2d: Sprite2D = $Sprite2D
+@onready var ray_cast_2d: RayCast2D = $RayCast2D
+
+
+func _ready() -> void:
+	global_position = blast_area.global_position
+	rotation = gun.rotation
+	velocity = Vector2(cos(gun.rotation),sin(gun.rotation)).normalized() * - speed
+
+func _physics_process(delta: float) -> void: 
+	move_and_slide()
+	ray_cast_2d.target_position.y = (speed * delta)
+	if ray_cast_2d.is_colliding(): queue_free()
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_va8r4"]
+size = Vector2(19, 37.5439)
+
+[node name="BurstBullet" type="CharacterBody2D"]
+scale = Vector2(0.6, 0.6)
+script = SubResource("GDScript_18tek")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-20.386, -0.0614029)
+rotation = 1.5708
+shape = SubResource("RectangleShape2D_va8r4")
+disabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(-21.6667, 2.42887e-12)
+rotation = 1.5708
+texture = ExtResource("1_f12ar")
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+position = Vector2(-43.3333, 1.84741e-13)
+rotation = 1.5708
