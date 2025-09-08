@@ -10,6 +10,8 @@ script/source = "extends Node2D
 @onready var blast_area = gun.get_node(\"BlastArea\")
 @onready var animation_player: AnimationPlayer = $Sprite2D/AnimationPlayer
 @onready var blast_sfx: AudioStreamPlayer = $Blast
+@onready var sprite_2d: Sprite2D = $Sprite2D
+
 
 func _ready() -> void:
 	global_position = blast_area.global_position
@@ -17,7 +19,9 @@ func _ready() -> void:
 	animation_player.play(\"blast\")
 	blast_sfx.play()
 
-func _on_animation_player_animation_finished(_anim_name: StringName) -> void: queue_free()
+func _on_animation_player_animation_finished(_anim_name: StringName) -> void: sprite_2d.visible = false
+
+func _on_blast_finished() -> void: queue_free()
 "
 
 [sub_resource type="Animation" id="Animation_08kqv"]
@@ -79,3 +83,4 @@ libraries = {
 stream = ExtResource("2_8by4n")
 
 [connection signal="animation_finished" from="Sprite2D/AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
+[connection signal="finished" from="Blast" to="." method="_on_blast_finished"]
