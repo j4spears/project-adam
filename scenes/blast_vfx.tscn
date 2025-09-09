@@ -81,6 +81,7 @@ libraries = {
 
 [node name="Blast" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_8by4n")
+volume_db = -24.233
 
 [connection signal="animation_finished" from="Sprite2D/AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
 [connection signal="finished" from="Blast" to="." method="_on_blast_finished"]

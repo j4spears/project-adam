@@ -1,7 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://b1ej7tjms2vft"]
+[gd_scene load_steps=10 format=3 uid="uid://b1ej7tjms2vft"]
 
 [ext_resource type="Script" uid="uid://dhh73j14bcckl" path="res://scenes/player.tres.gd" id="1_qlg0r"]
-[ext_resource type="AudioStream" uid="uid://b4qgu67y3iqm3" path="res://sounds/blastsfx.wav" id="2_tuyoq"]
 [ext_resource type="AudioStream" uid="uid://b4e85f646ygxu" path="res://sounds/jump.wav" id="3_fjrip"]
 [ext_resource type="AudioStream" uid="uid://cbj7pccj2oaqh" path="res://sounds/shootsfx.wav" id="4_smehm"]
 [ext_resource type="Texture2D" uid="uid://cmh12h7a2r7mp" path="res://sprites/gun.png" id="5_ur7pv"]
@@ -78,21 +77,18 @@ one_shot = true
 
 [node name="Sfx" type="Node" parent="."]
 
-[node name="Blast" type="AudioStreamPlayer" parent="Sfx"]
-stream = ExtResource("2_tuyoq")
-
 [node name="Jump" type="AudioStreamPlayer" parent="Sfx"]
 stream = ExtResource("3_fjrip")
-volume_db = -10.0
+volume_db = -32.214
 
 [node name="Bullet" type="AudioStreamPlayer" parent="Sfx"]
 stream = ExtResource("4_smehm")
-volume_db = -17.6
+volume_db = -32.241
 pitch_scale = 1.18
 
 [node name="BurstBullet" type="AudioStreamPlayer" parent="Sfx"]
 stream = ExtResource("4_smehm")
-volume_db = -17.6
+volume_db = -30.727
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(12, -38)

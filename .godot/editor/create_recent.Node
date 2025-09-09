@@ -1,4 +1,6 @@
+WorldEnvironment
 PointLight2D
+LightOccluder2D
 LightmapGI
 CanvasModulate
 CollisionShape2D
@@ -11,5 +13,3 @@ Line2D
 Timer
 CPUParticles2D
 TextureRect
-GPUParticles2D
-RayCast2D

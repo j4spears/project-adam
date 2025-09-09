@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=4 uid="uid://3l0f8bybwa32"]
+[gd_scene load_steps=33 format=4 uid="uid://3l0f8bybwa32"]
 
 [ext_resource type="Texture2D" uid="uid://xucek1uimjn4" path="res://sprites/blue block.png" id="2_rnjyy"]
 [ext_resource type="Texture2D" uid="uid://281mv731mrwk" path="res://sprites/temp spikes.png" id="2_xtx0q"]
@@ -70,6 +70,17 @@ _data = {
 }
 point_count = 2
 
+[sub_resource type="Gradient" id="Gradient_hsdmi"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.441781, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.0445206, 0.0445206, 0.0445206, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ifa78"]
+gradient = SubResource("Gradient_hsdmi")
+fill = 1
+fill_from = Vector2(0.511905, 0.509524)
+fill_to = Vector2(0.740476, 0.209524)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xtx0q"]
 size = Vector2(9113, 1356)
 
@@ -89,13 +100,13 @@ size = Vector2(131, 379)
 size = Vector2(378, 126)
 
 [sub_resource type="Gradient" id="Gradient_f6ptj"]
-offsets = PackedFloat32Array(0.010274, 1)
-colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+offsets = PackedFloat32Array(0.010274, 0.140411, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.806228, 0.806228, 0.806228, 1, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_hsdmi"]
 gradient = SubResource("Gradient_f6ptj")
 fill = 1
-fill_from = Vector2(0.485714, 0.0142857)
+fill_from = Vector2(0.47619, 0)
 fill_to = Vector2(0.166667, 0.328571)
 
 [node name="Node2D" type="Node2D"]
@@ -233,6 +244,12 @@ texture = ExtResource("9_qv8l0")
 [node name="Player" parent="." instance=ExtResource("10_dubn7")]
 position = Vector2(19181, 10638)
 
+[node name="PointLight2D" type="PointLight2D" parent="Player"]
+position = Vector2(13.1148, -39.3443)
+scale = Vector2(57.97, 57.97)
+energy = 0.79
+texture = SubResource("GradientTexture2D_ifa78")
+
 [node name="CaveFloor" type="StaticBody2D" parent="."]
 position = Vector2(-103, 1708)
 
@@ -241,6 +258,7 @@ shape = SubResource("RectangleShape2D_xtx0q")
 
 [node name="TestSpaceship" type="Sprite2D" parent="."]
 position = Vector2(16830, 10824)
+scale = Vector2(0.74, 0.74)
 texture = ExtResource("11_08kqv")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="TestSpaceship"]
@@ -321,10 +339,10 @@ position = Vector2(3333, 67)
 shape = SubResource("RectangleShape2D_x63s8")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-visible = false
 color = Color(0.342207, 0.342207, 0.342207, 1)
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
-position = Vector2(19531, 10939)
-scale = Vector2(18.86, 18.86)
+position = Vector2(18788, 10978)
+scale = Vector2(16.882, 15.947)
+shadow_enabled = true
 texture = SubResource("GradientTexture2D_hsdmi")
