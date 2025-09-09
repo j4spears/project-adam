@@ -526,6 +526,10 @@ func move(current_speed, current_acceleration, current_deceleration, delta):
 	else: 
 		velocity.x = lerp(velocity.x, final_velocity, current_deceleration * delta)
 
+#endregion
+
+#region SIGNALS
+
 func _on_hurtbox_body_shape_entered(_body_rid: RID, _body: Node2D, _body_shape_index: int, _local_shape_index: int) -> void:
 	position = Vector2(3221.0,10196.001)
 

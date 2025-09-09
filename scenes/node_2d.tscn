@@ -172,7 +172,6 @@ scale = Vector2(0.625, 0.953125)
 texture = SubResource("GradientTexture2D_f6ptj")
 
 [node name="Cave" type="ParallaxBackground" parent="."]
-visible = false
 
 [node name="ParallaxLayer5" type="ParallaxLayer" parent="Cave"]
 motion_scale = Vector2(0, 0)
@@ -206,10 +205,9 @@ texture = ExtResource("8_0q20i")
 texture = ExtResource("9_qv8l0")
 
 [node name="Player" parent="." instance=ExtResource("10_dubn7")]
-position = Vector2(2255, 10561)
+position = Vector2(-50, 10221)
 
 [node name="CaveFloor" type="StaticBody2D" parent="."]
-visible = false
 position = Vector2(-103, 1708)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CaveFloor"]

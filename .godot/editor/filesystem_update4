@@ -1,6 +1,7 @@
+res://scenes/player.tscn
+res://scenes/player.tres.gd
 res://scenes/node_2d.tscn
 res://scenes/bullet.tscn
 res://scenes/moveable_object.tscn
 res://scenes/blast_vfx.tscn
 res://scenes/burst_bullet.tscn
-res://scenes/player.tscn

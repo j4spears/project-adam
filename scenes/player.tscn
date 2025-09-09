@@ -116,6 +116,7 @@ region_enabled = true
 region_rect = Rect2(192, 344, 616, 240)
 
 [node name="BlastArea" type="Area2D" parent="Gun"]
+show_behind_parent = true
 position = Vector2(-377.777, 16.6678)
 rotation = 3.14159
 scale = Vector2(2.77777, -2.77778)
