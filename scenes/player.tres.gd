@@ -165,8 +165,8 @@ func enter_fall():
 func enter_dash(): 
 	#label.text = "dash"
 	#print("dash")
-	
 	velocity = Vector2(cos(gun.rotation),sin(gun.rotation)).normalized() * dash_speed
+	
 	get_parent().add_child(blast_vfx.instantiate())
 	blast_collision.disabled = false
 	Input.start_joy_vibration(0,1,1,0.175)

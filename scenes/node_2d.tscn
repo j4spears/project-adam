@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=4 uid="uid://3l0f8bybwa32"]
+[gd_scene load_steps=37 format=4 uid="uid://3l0f8bybwa32"]
 
 [ext_resource type="Texture2D" uid="uid://xucek1uimjn4" path="res://sprites/blue block.png" id="2_rnjyy"]
 [ext_resource type="Texture2D" uid="uid://281mv731mrwk" path="res://sprites/temp spikes.png" id="2_xtx0q"]
@@ -11,6 +11,10 @@
 [ext_resource type="Texture2D" uid="uid://um17mry84jor" path="res://sprites/cave layer 1.png" id="9_qv8l0"]
 [ext_resource type="PackedScene" uid="uid://b1ej7tjms2vft" path="res://scenes/player.tscn" id="10_dubn7"]
 [ext_resource type="Texture2D" uid="uid://b1twxgw5c31o7" path="res://sprites/test spaceship.png" id="11_08kqv"]
+[ext_resource type="Texture2D" uid="uid://b2nwsolcwxjdn" path="res://sprites/Woods/Paralax layer 3.png" id="12_xtx0q"]
+[ext_resource type="Texture2D" uid="uid://chwkefoewky3o" path="res://sprites/Woods/Paralax layer 2.png" id="13_3kg8w"]
+[ext_resource type="Texture2D" uid="uid://cdipwpna7d833" path="res://sprites/Woods/Paralax layer 1.png" id="14_x63s8"]
+[ext_resource type="Texture2D" uid="uid://bvwo0syfcov5r" path="res://sprites/Woods/map layer 2.png" id="15_0q20i"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_dubn7"]
 polygon = PackedVector2Array(-8, 8, -8, -8, 8, -8, 8, 8)
@@ -211,6 +215,7 @@ texture = SubResource("GradientTexture2D_f6ptj")
 [node name="Cave" type="ParallaxBackground" parent="."]
 
 [node name="ParallaxLayer5" type="ParallaxLayer" parent="Cave"]
+position = Vector2(-31, -6966)
 motion_scale = Vector2(0, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="Cave/ParallaxLayer5"]
@@ -219,42 +224,47 @@ scale = Vector2(5.24, 5.24)
 texture = ExtResource("5_xtx0q")
 
 [node name="ParallaxLayer4" type="ParallaxLayer" parent="Cave"]
+position = Vector2(-31, -6966)
 motion_scale = Vector2(0.4, 0.4)
 
 [node name="Sprite2D" type="Sprite2D" parent="Cave/ParallaxLayer4"]
 texture = ExtResource("6_3kg8w")
 
 [node name="ParallaxLayer3" type="ParallaxLayer" parent="Cave"]
+position = Vector2(-31, -6966)
 motion_scale = Vector2(0.6, 0.6)
 
 [node name="Sprite2D" type="Sprite2D" parent="Cave/ParallaxLayer3"]
 texture = ExtResource("7_x63s8")
 
 [node name="ParallaxLayer2" type="ParallaxLayer" parent="Cave"]
+position = Vector2(-31, -6966)
 
 [node name="Sprite2D" type="Sprite2D" parent="Cave/ParallaxLayer2"]
 position = Vector2(144, 5)
 texture = ExtResource("8_0q20i")
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="Cave"]
+position = Vector2(-31, -6966)
 
 [node name="Sprite2D" type="Sprite2D" parent="Cave/ParallaxLayer"]
 texture = ExtResource("9_qv8l0")
 
 [node name="Player" parent="." instance=ExtResource("10_dubn7")]
-position = Vector2(19181, 10638)
+position = Vector2(4031, 9204)
 
 [node name="PointLight2D" type="PointLight2D" parent="Player"]
-position = Vector2(13.1148, -39.3443)
-scale = Vector2(57.97, 57.97)
+position = Vector2(4.91809, -57.3771)
+scale = Vector2(83.39, 83.39)
 energy = 0.79
 texture = SubResource("GradientTexture2D_ifa78")
 
 [node name="CaveFloor" type="StaticBody2D" parent="."]
-position = Vector2(-103, 1708)
+position = Vector2(-98, 772)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CaveFloor"]
 shape = SubResource("RectangleShape2D_xtx0q")
+disabled = true
 
 [node name="TestSpaceship" type="Sprite2D" parent="."]
 position = Vector2(16830, 10824)
@@ -346,3 +356,87 @@ position = Vector2(18788, 10978)
 scale = Vector2(16.882, 15.947)
 shadow_enabled = true
 texture = SubResource("GradientTexture2D_hsdmi")
+
+[node name="Node2D" type="Node2D" parent="."]
+scale = Vector2(4, 4)
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="Node2D"]
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+motion_scale = Vector2(0.94, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer3"]
+position = Vector2(0, 50)
+scale = Vector2(6.13, 6.13)
+texture = ExtResource("12_xtx0q")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+motion_scale = Vector2(0.96, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer2"]
+position = Vector2(0, 50)
+scale = Vector2(6.13, 6.13)
+texture = ExtResource("13_3kg8w")
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+motion_scale = Vector2(0.98, 1)
+
+[node name="Sprite2D2" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer"]
+position = Vector2(0, 50)
+scale = Vector2(6.13, 6.13)
+texture = ExtResource("14_x63s8")
+
+[node name="ParallaxLayer4" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer4"]
+scale = Vector2(6.13, 6.13)
+texture = ExtResource("15_0q20i")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Node2D"]
+position = Vector2(0, 38.7597)
+scale = Vector2(1.55039, 1.55039)
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
+position = Vector2(0, -25)
+scale = Vector2(0.645, 0.645)
+polygon = PackedVector2Array(-3963.57, 837.209, -3964.34, 37.9845, -3279.84, 39.5349, -3279.84, 8.52713, -3045.74, 9.30233, -3045.74, 39.5349, -2985.27, 39.5349, -2986.05, 71.3178, -2925.58, 71.3178, -2908.53, 88.3721, -2844.96, 102.326, -2801.55, 82.9457, -2801.55, 69.7674, -2650.39, 70.5426, -2650.39, -21.7054, -2620.16, -21.7054, -2620.16, -113.178, -2288.37, -113.178, -2288.37, -81.3953, -2305.43, -57.3643, -2332.56, -37.2093, -2348.84, -37.9845, -2368.22, -39.5349, -2386.82, -37.9845, -2396.9, -21.7054, -2418.6, -15.5039, -2433.33, -4.65116, -2443.41, 13.1783, -2449.61, 24.031, -2450.39, 39.5349, -2500.78, 623.256)
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="Node2D"]
+position = Vector2(0, 38.7597)
+scale = Vector2(1.55039, 1.55039)
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="Node2D/StaticBody2D2"]
+position = Vector2(0, -25)
+scale = Vector2(0.645, 0.645)
+polygon = PackedVector2Array(-2450.39, 39.5349, -2338.76, 39.5349, -2338.76, 64.3411, -2343.41, 79.0698, -2345.74, 89.1473, -2344.19, 99.2248, -2334.88, 134.884, -2351.16, 189.147, -2341.86, 210.853, -2269.77, 213.953, -2257.36, 186.822, -2272.87, 129.457, -2282.95, 79.845, -2286.05, 70.5426, -2224.03, 70.5426, -2224.03, -113.178, -1604.65, -112.403, -1604.65, -36.4341, -1527.91, -36.4341, -1527.91, 38.7597, 225.581, 38.7597, 225.581, 9.30233, 277.519, 9.30233, 277.519, 0, 301.55, 0, 301.55, -9.30233, 758.14, -9.30233, 769.767, 14.7287, 811.628, 23.2558, 844.961, 24.031, 879.845, 18.6047, 949.612, 6.97674, 1017.83, -4.65116, 1046.51, -30.2326, 1043.41, -46.5116, 1043.41, -51.1628, 1193.8, -51.1628, 1193.8, 9.30233, 1225.58, 9.30233, 1224.81, 69.7674, -2218.6, 425.581, -2416.28, 316.279, -2441.09, 43.4109)
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="Node2D"]
+scale = Vector2(0.775194, 0.775194)
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="Node2D/StaticBody2D3"]
+scale = Vector2(1.29, 1.29)
+polygon = PackedVector2Array(1224.81, 70.5426, 1286.82, 70.5426, 1286.82, 55.0388, 1348.84, 55.0388, 1348.84, 40.3101, 1408.53, 40.3101, 1408.53, 9.30233, 1438.76, 9.30233, 1438.76, -82.1705, 1527.91, -82.1705, 1527.91, -53.4884, 1506.2, -10.8527, 1500.78, 11.6279, 1500, 104.651, 1528.68, 160.465, 1528.68, 228.682, 1478.29, 270.543, 1471.32, 312.403, 1397.67, 461.24, 2311.63, 438.76, 2341.86, 302.326, 2300.78, 248.837, 2272.09, 193.798, 2247.29, 57.3643, 2214.73, -10.8527, 2208.53, -31.0078, 2209.3, -63.5659, 2198.45, -75.969, 2198.45, -82.1705, 2348.84, -82.1705, 2348.84, 39.5349, 2355.81, 46.5116, 2377.52, 48.8372, 2406.2, 57.3643, 2465.12, 54.2636, 2502.33, 45.7364, 2537.98, 46.5116, 2562.79, 39.5349, 2562.79, -21.7054, 2590.7, -21.7054, 2590.7, 37.9845, 2583.72, 86.8217, 2468.22, 330.233, 2260.47, 594.574, 1626.36, 548.062, 1244.96, 566.667, 910.853, 172.868)
+
+[node name="StaticBody2D4" type="StaticBody2D" parent="Node2D"]
+scale = Vector2(0.775194, 0.775194)
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="Node2D/StaticBody2D4"]
+scale = Vector2(1.29, 1.29)
+polygon = PackedVector2Array(2444.19, -138.76, 2444.96, -114.729, 2446.51, -98.4496, 2444.19, -76.7442, 2446.51, -53.4884, 2464.34, -53.4884, 2470.54, -62.7907, 2468.99, -93.7985, 2467.44, -111.628, 2470.54, -143.411, 2456.59, -139.535)
+
+[node name="StaticBody2D5" type="StaticBody2D" parent="Node2D"]
+scale = Vector2(0.775194, 0.775194)
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Node2D/StaticBody2D5"]
+scale = Vector2(1.29, 1.29)
+polygon = PackedVector2Array(2590.7, 39.5349, 2601.55, 50.3876, 2633.33, 49.6124, 2678.29, 48.8372, 2684.5, 38.7597, 2684.5, -20.9302, 3472.87, -20.9302, 3472.87, 100.775, 3965.12, 100, 3965.12, 837.209, 2488.37, 814.729, 2507.75, 331.008)

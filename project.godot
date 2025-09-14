@@ -23,6 +23,10 @@ window/size/initial_position_type=3
 window/size/resizable=false
 window/stretch/mode="viewport"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 ui_accept={
@@ -127,4 +131,4 @@ dodgeroll={
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.257476, 0.257476, 0.257476, 1)
+environment/defaults/default_clear_color=Color(0.805458, 0.866469, 0.594631, 1)
