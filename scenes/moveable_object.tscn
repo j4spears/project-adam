@@ -10,7 +10,6 @@ script/source = "extends CharacterBody2D
 @export var dash_speed:= 1000
 @onready var area_2d: Area2D = $Area2D
 
-
 @onready var blast_area: Area2D = $\"../Player/Gun/BlastArea\"
 @onready var player: CharacterBody2D = $\"../Player\"
 
@@ -20,7 +19,7 @@ var final_velocity
 
 #region STATE MACHINE
 
-enum states {AIR, GROUND, BLASTED}
+enum states {AIR, GROUND, BLASTED, GRAVNADED}
 var state =  states.AIR
 
 func change_state(new_state):
@@ -29,6 +28,7 @@ func change_state(new_state):
 		states.AIR: exit_air()
 		states.GROUND: exit_ground()
 		states.BLASTED: exit_blasted()
+		states.GRAVNADED: exit_gravnaded()
 	
 	state = new_state
 	
@@ -36,6 +36,7 @@ func change_state(new_state):
 		states.AIR: enter_air()
 		states.GROUND: enter_ground()
 		states.BLASTED: enter_blasted()
+		states.GRAVNADED: enter_gravnaded()
 
 func _physics_process(delta):
 	
@@ -43,6 +44,7 @@ func _physics_process(delta):
 		states.AIR: air(delta)
 		states.GROUND: ground(delta)
 		states.BLASTED: blasted(delta)
+		states.GRAVNADED: gravnaded(delta)
 	
 	move_and_slide()
 
@@ -61,6 +63,10 @@ func enter_blasted():
 	player.dash_time.start()
 	velocity = final_velocity
 
+func enter_gravnaded():
+	#print(\"gravnaded\")
+	pass
+
 #endregion
 
 #region STATE PROCESS
@@ -72,6 +78,9 @@ func air(delta):
 	
 	if not velocity.x == 0: velocity.x = lerp(velocity.x, 0.0, airborne_deceleration * delta)
 	
+	for body in area_2d.get_overlapping_areas(): if body.collision_layer & (1 << (3)): 
+		change_state(states.GRAVNADED)
+	
 	if is_on_floor(): change_state(states.GROUND)
 
 func ground(delta):
@@ -81,9 +90,44 @@ func ground(delta):
 	if not velocity.x == 0: velocity.x = lerp(velocity.x, 0.0, deceleration * delta)
 	
 	if not is_on_floor(): change_state(states.AIR)
+	
+	for body in area_2d.get_overlapping_areas(): if body.collision_layer & (1 << (3)): 
+		change_state(states.GRAVNADED)
 
 func blasted(_delta):
 	if player.dash_time.time_left == 0: change_state(states.AIR)
+	
+	for body in area_2d.get_overlapping_areas(): if body.collision_layer & (1 << (3)): 
+		change_state(states.GRAVNADED)
+
+func gravnaded(delta):
+	
+	var in_zone = false
+	
+	for body in area_2d.get_overlapping_areas(): 
+		
+		if body.collision_layer & (1 << (3)): 
+			
+			in_zone = true
+			
+			if (is_zero_approx(abs(body.rotation) -PI/2)):
+				
+				if abs(global_position.x - body.global_position.x) > 100:
+					global_position.x = move_toward(global_position.x, body.global_position.x, 150 * airborne_deceleration * delta)
+				else: 
+					global_position.x = lerp(global_position.x, body.global_position.x, airborne_deceleration * delta)
+				
+				velocity *= Vector2(0.99, 0.8)
+				
+			else:
+				if abs(global_position.y - body.global_position.y) > 100:
+					global_position.y = move_toward(global_position.y, body.global_position.y, 150 * airborne_deceleration * delta)
+				else: 
+					global_position.y = lerp(global_position.y, body.global_position.y, airborne_deceleration * delta)
+				
+				velocity *= Vector2(0.95, 0.9)
+	
+	if not in_zone: change_state(states.AIR)
 
 #endregion
 
@@ -95,10 +139,9 @@ func exit_ground(): pass
 
 func exit_blasted(): pass
 
-#endregion
+func exit_gravnaded(): pass
 
-func shot_check():
-	if area_2d.has_overlapping_areas(): queue_free()
+#endregion
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rnjyy"]
@@ -115,6 +158,7 @@ gradient = SubResource("Gradient_qtqps")
 size = Vector2(40, 60)
 
 [node name="Moveable" type="CharacterBody2D"]
+platform_on_leave = 2
 script = SubResource("GDScript_rnjyy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -127,7 +171,7 @@ texture = SubResource("GradientTexture2D_4vge2")
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 2
-collision_mask = 2
+collision_mask = 10
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_qtqps")

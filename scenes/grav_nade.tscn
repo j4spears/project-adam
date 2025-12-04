@@ -1,0 +1,221 @@
+[gd_scene load_steps=8 format=3 uid="uid://scsgktg7tj78"]
+
+[ext_resource type="Texture2D" uid="uid://b4qlfr36b2g1d" path="res://sprites/grav_nade.png" id="1_huff3"]
+[ext_resource type="PackedScene" uid="uid://dd2c7xqtoe6qk" path="res://scenes/zero_grav_zone.tscn" id="3_t38fc"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_huff3"]
+friction = 0.8
+bounce = 0.2
+
+[sub_resource type="GDScript" id="GDScript_huff3"]
+script/source = "extends RigidBody2D
+
+#region VARIABLES
+
+@export var throw_force = 3000
+@export var grenade_hover_height := 25.0
+@export var dash_speed:= 100
+
+@onready var player =get_parent().get_parent().get_node(\"Player\")
+@onready var gun = player.get_node(\"Gun\")
+@onready var blast_area = gun.get_node(\"BlastArea\")
+@onready var countdown: Timer = $\"../Countdown\"
+@onready var zero_grav_duration: Timer = $\"../ZeroGravDuration\"
+
+@onready var grenade_area: Area2D = $Area2D
+@onready var acsend = false
+@onready var prime_direction
+
+@onready var zero_grav: Node2D = $\"../ZeroGrav\"
+@onready var zero_grav_area = zero_grav.get_node(\"Area2D\")
+@onready var zero_grav_zone = zero_grav_area.get_node(\"CollisionShape2D\")
+@onready var zone_sprite: Sprite2D = $\"../ZeroGrav/Area2D/ZoneSprite\"
+@onready var zone_height = zero_grav_area.position.y
+
+#endregion
+
+#region STATE MACHINE
+
+enum states {THROW, PRIME, EXPLOSION, FALL}
+var state
+
+func change_state(new_state):
+	
+	state = new_state
+	
+	match state:
+		states.THROW: enter_throw()
+		states.PRIME: enter_prime()
+		states.EXPLOSION: enter_explosion()
+		states.FALL: enter_fall()
+
+func _physics_process(delta):
+	
+	match state:
+		states.THROW: throw(delta)
+		states.PRIME: prime(delta)
+		states.EXPLOSION: explosion()
+		states.FALL: fall()
+	
+	if blast_area.get_overlapping_bodies().has(self):
+		linear_velocity = Vector2.ZERO
+		apply_central_impulse( Vector2(-cos(player.gun.rotation),-sin(player.gun.rotation)) * dash_speed)
+
+#endregion
+
+func _ready() -> void: 
+	zero_grav_zone.disabled = true
+	change_state(states.THROW)
+
+#region THROW
+
+func enter_throw(): 
+	global_position = blast_area.global_position
+	apply_force(Vector2(cos(gun.rotation),sin(gun.rotation)).normalized() * - throw_force)
+	countdown.start()
+
+func throw(delta): 
+	var grounded = false
+	
+	if Input.is_action_pressed(\"prime_grenade_up\"): prime_direction = \"up\"
+	elif Input.is_action_pressed(\"prime_grenade_down\"): prime_direction = \"down\"
+	elif Input.is_action_pressed(\"prime_grenade_left\"): prime_direction = \"left\"
+	elif Input.is_action_pressed(\"prime_grenade_right\"): prime_direction = \"right\"
+	
+	for body in get_colliding_bodies(): if body is TileMapLayer: grounded = true
+	if prime_direction and grounded: change_state(states.PRIME)
+
+#endregion
+
+#region PRIME
+
+func enter_prime(): 
+	linear_velocity.x = 0
+	grenade_hover_height = global_position.y - grenade_hover_height 
+	self.gravity_scale = 0
+
+func prime(delta): 
+	
+	if prime_direction == \"up\": 
+		global_position.y = lerp(global_position.y, grenade_hover_height + 10 , 20 * delta)
+		if (global_position.y - (grenade_hover_height + 10)) < 0.1 : change_state(states.EXPLOSION)
+	elif prime_direction == \"down\": 
+		global_position.y = lerp(global_position.y, grenade_hover_height + zone_height - 50, 10 * delta)
+		if (global_position.y - (grenade_hover_height + zone_height - 50)) < 0.2 : change_state(states.EXPLOSION)
+	else: 
+		global_position.y = lerp(global_position.y, grenade_hover_height + zone_height/2 - 10, 15 * delta)
+		if (global_position.y - (grenade_hover_height + zone_height/2 - 10)) < 0.15 : change_state(states.EXPLOSION)
+
+
+#endregion
+
+#region EXPLOSION
+
+func enter_explosion():
+	linear_velocity.y = 0
+	
+	if prime_direction == \"up\": 
+		zone_sprite.scale.y = 7.7
+		zero_grav_area.position = Vector2(0,-160)
+		zero_grav_area.scale = Vector2(1,0.88)
+		zero_grav_area.rotation = 0
+	elif prime_direction == \"down\": 
+		zone_sprite.scale.y = 6
+		zero_grav_area.position = Vector2(0,194)
+		zero_grav_area.scale = Vector2(1,1.1)
+		zero_grav_area.rotation = PI
+	elif prime_direction == \"left\": 
+		zone_sprite.scale.y = 5.8
+		zero_grav_area.position = Vector2(-361,0)
+		zero_grav_area.rotation = -PI/2
+		zero_grav_area.scale = Vector2(0.56,2.09)
+	elif prime_direction == \"right\": 
+		zone_sprite.scale.y = 5.8
+		zero_grav_area.position = Vector2(361,0)
+		zero_grav_area.scale = Vector2(0.56,2.09)
+		zero_grav_area.rotation = PI/2
+	
+	zero_grav_zone.disabled = false
+	zone_sprite.visible = true
+	zero_grav_duration.start()
+
+func explosion(): 
+	zero_grav.global_position = Vector2(self.global_position.x, self.global_position.y)
+	#zone_sprite.global_position = Vector2(self.global_position.x, self.global_position.y)
+	if zero_grav_duration.time_left == 0: change_state(states.FALL)
+
+#endregion
+
+#region FALL
+
+func enter_fall(): 
+	gravity_scale = 1
+	zero_grav_zone.disabled = true
+	zone_sprite.visible = false
+
+func fall(): for body in get_colliding_bodies(): if body is TileMapLayer: get_parent().queue_free()
+
+#endregion
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_huff3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qi6lh"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t38fc"]
+
+[node name="Node2D" type="Node2D"]
+top_level = true
+
+[node name="ZeroGravDuration" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="RigidBody2D" type="RigidBody2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+mass = 0.1
+physics_material_override = SubResource("PhysicsMaterial_huff3")
+contact_monitor = true
+max_contacts_reported = 1
+script = SubResource("GDScript_huff3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
+shape = SubResource("CircleShape2D_huff3")
+
+[node name="Sprite2D" type="Sprite2D" parent="RigidBody2D"]
+scale = Vector2(0.400001, 0.400001)
+texture = ExtResource("1_huff3")
+
+[node name="Area2D" type="Area2D" parent="RigidBody2D"]
+collision_mask = 9
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D/Area2D"]
+shape = SubResource("CircleShape2D_qi6lh")
+
+[node name="Countdown" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="ZeroGrav" parent="." instance=ExtResource("3_t38fc")]
+
+[node name="CollisionShape2D" parent="ZeroGrav/Area2D" index="0"]
+visible = true
+
+[node name="ZoneSprite" parent="ZeroGrav/Area2D" index="1"]
+position = Vector2(0, 167.045)
+scale = Vector2(11.84, 7.18255)
+offset = Vector2(0, -16)
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="Area2D" type="Area2D" parent="Node2D"]
+collision_layer = 9
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D/Area2D"]
+visible = false
+shape = SubResource("RectangleShape2D_t38fc")
+
+[connection signal="body_entered" from="RigidBody2D" to="RigidBody2D" method="_on_body_entered"]
+
+[editable path="ZeroGrav"]

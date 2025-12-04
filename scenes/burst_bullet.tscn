@@ -53,6 +53,7 @@ shape = SubResource("RectangleShape2D_va8r4")
 disabled = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(28.699, 0.277, 0.994, 1)
 texture_filter = 1
 position = Vector2(-21.6667, 2.42887e-12)
 rotation = 1.5708
@@ -63,7 +64,7 @@ position = Vector2(7.84329e-05, 21.6666)
 collision_mask = 3
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
-self_modulate = Color(21.006, 5.325, 0, 1)
+self_modulate = Color(10, 0.402, 0.334, 1)
 emitting = false
 amount = 10
 texture = ExtResource("2_57ofd")

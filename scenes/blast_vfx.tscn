@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://diuugej7ndmxk"]
 
 [ext_resource type="Texture2D" uid="uid://7ud6lboc3qs5" path="res://sprites/blastvfx.png" id="1_abr51"]
-[ext_resource type="AudioStream" uid="uid://b4qgu67y3iqm3" path="res://sounds/blastsfx.wav" id="2_8by4n"]
+[ext_resource type="AudioStream" uid="uid://b1fnhbrlah035" path="res://sounds/blastsfx.wav" id="2_8by4n"]
 
 [sub_resource type="GDScript" id="GDScript_vweji"]
 script/source = "extends Node2D
@@ -72,7 +72,7 @@ scale = Vector2(5, 5)
 texture = ExtResource("1_abr51")
 flip_h = true
 hframes = 8
-frame = 7
+frame = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite2D"]
 libraries = {
