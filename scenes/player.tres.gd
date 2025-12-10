@@ -20,13 +20,14 @@ enum variable_speed_type {none, discrete, continuous}
 @export var hang_time:= false
 enum variable_jump_type {none, smooth, sharp}
 @export var variable_jump = variable_jump_type.none
-@export var max_fall_speed:= 200
+@export var max_fall_speed:= 125
 @export_subgroup("gravity")
 @export var ascend:= 20
 @export var descend:= 50
 
 @export_category("Wall Slide")
-@export var wallslide_speed = 300
+@export var wallslide_speed = 300.0
+@export var wallslide_acceleration = 300.0
 @export var wall_jump_distance = 300
 
 @export_category("Gun")
@@ -53,6 +54,7 @@ enum aiming_devices {controller, mouse}
 @onready var burst_cooldown: Timer = $Timers/BurstCooldown
 @onready var dodge_time: Timer = $Timers/DodgeTime
 @onready var dash_delay: Timer = $Timers/DashDelay
+@onready var wall_latch_time: Timer = $Timers/WallLatchTime
 
 
 @onready var jump_sfx: AudioStreamPlayer = $Sfx/Jump
@@ -222,14 +224,15 @@ func jump(delta):
 	if hang_time:
 		if hang_timer.time_left == 0 and velocity.y == 0: change_state(states.FALL)
 		elif hang_timer.time_left == 0: velocity.y += ascend
-		else: velocity.y = 0
+		else: 
+			if is_on_wall() and has_wallslide: change_state(states.WALLSLIDE)
+			velocity.y = 0
 	else: velocity.y += ascend
 	
 	if Input.is_action_just_pressed("jump"): jump_buffer.start()
 	
 	if Input.is_action_just_pressed("dash") and not dash_used and has_dash: change_state(states.DASH)
 	elif  is_on_floor(): change_state(states.RUN)
-	elif is_on_wall() and has_wallslide: change_state(states.WALLSLIDE)
 	
 	for area in hurtbox.get_overlapping_areas(): if area.collision_layer & (1 << (3)): change_state(states.GRAVNADED)
 
@@ -367,17 +370,17 @@ func exit_crouch():
 func enter_wallslide():
 	#label.text = "wallslide"
 	#print("wallslide")
-	
+	velocity = Vector2.ZERO
+	wall_latch_time.start()
 	dash_used = false
 
-func wallslide(_delta):
+func wallslide(delta):
 	
 	aim()
 	shoot()
 	if Input.is_action_just_pressed("grenade"): throw("grav_nade")
 	
-	if velocity.y < wallslide_speed: velocity.y += descend
-	else: velocity.y = wallslide_speed
+	if wall_latch_time.time_left == 0 and velocity.y < wallslide_speed: velocity.y = lerp(velocity.y, wallslide_speed, 10 * delta)
 	
 	if get_wall_normal().x == 1: 
 		velocity.x = -1
@@ -389,9 +392,13 @@ func wallslide(_delta):
 	if is_on_floor(): change_state(states.RUN)
 	elif Input.is_action_just_pressed("dash") and has_dash: change_state(states.DASH)
 	elif Input.is_action_just_pressed("jump") or not jump_buffer.time_left == 0: change_state(states.JUMP)
+	elif get_wall_normal().x == 1 and Input.is_action_pressed("ls_right"): 
+		position.x += 1 
+		change_state(states.FALL)
+	elif get_wall_normal().x == -1 and Input.is_action_pressed("ls_left"): 
+		position.x -= 1
+		change_state(states.FALL)
 	elif  not is_on_wall(): change_state(states.FALL)
-	elif get_wall_normal().x == 1 and Input.is_action_pressed("ls_right"): change_state(states.FALL)
-	elif get_wall_normal().x == -1 and Input.is_action_pressed("ls_left"): change_state(states.FALL)
 	
 	for area in hurtbox.get_overlapping_areas(): if area.collision_layer & (1 << (3)): change_state(states.GRAVNADED)
 
@@ -521,23 +528,23 @@ func move(max_speed, current_acceleration, current_deceleration, delta):
 func aim():
 	
 	if not burst_in_use:
-	
+		
 		if Input.get_axis("rs_left","rs_right") == 0 and Input.get_axis("rs_down","rs_up") == 0 and aiming_device == aiming_devices.controller:
 			
-			if aiming_device == aiming_devices.controller: rs_angle = Vector2(0,0).angle_to_point(Vector2(Input.get_axis("ls_left","ls_right"),Input.get_axis("ls_down","ls_up")))
+			if aiming_device == aiming_devices.controller: rs_angle = Vector2(0,0).angle_to_point(Vector2(Input.get_axis("rs_left","rs_right"),Input.get_axis("rs_down","rs_up")))
 			
-			#if Input.is_action_pressed("ls_right"): 
-				#gun.rotation = PI
-				#rs_zone = 5
-			#elif Input.is_action_pressed("ls_left"): 
-				#gun.rotation = 0
-				#rs_zone = 1
-			#elif gun.flip_v == true: 
-				#gun.rotation = 0
-				#rs_zone = 1
-			#else: 
-				#gun.rotation = PI
-				#rs_zone = 5
+			if Input.is_action_pressed("ls_right"): 
+				gun.rotation = PI
+				rs_zone = 5
+			elif Input.is_action_pressed("ls_left"): 
+				gun.rotation = 0
+				rs_zone = 1
+			elif gun.flip_v == true: 
+				gun.rotation = 0
+				rs_zone = 1
+			else: 
+				gun.rotation = PI
+				rs_zone = 5
 			
 		else:
 			
@@ -576,9 +583,7 @@ func aim():
 					gun.rotation = 0
 					rs_zone = 1
 				
-			#else: gun.rotation = PI - rs_angle
-		
-		if aiming == 1: gun.rotation = PI - rs_angle
+			else: gun.rotation = PI - rs_angle
 	
 	if gun.flip_v == false: 
 		if gun.rotation < 1.5 or gun.rotation > 5: gun.flip_v = true
@@ -610,6 +615,7 @@ func shoot():
 	if state in [states.RUN, states.WALLSLIDE]: burst_used = false
 	
 	if Input.is_action_pressed("burst") and burst_cooldown.time_left == 0 and has_burst and not burst_used and not gun_overlapping_env: 
+		shoot_cooldown.wait_time = 0.09
 		burst_in_use = true
 		bullets_shot = 0
 	
@@ -657,6 +663,7 @@ func shoot():
 		elif bullets_shot == 3: 
 			burst_used = true
 			burst_in_use = false
+			shoot_cooldown.wait_time = 0.1
 	
 	if Input.is_action_pressed("shoot") and shoot_cooldown.time_left == 0 and not gun_overlapping_env: 
 		
@@ -665,7 +672,7 @@ func shoot():
 		shoot_cooldown.start()
 		var this_bullet = bullet.instantiate()
 		get_parent().add_child(this_bullet)
-		if rs_angle < 0 and velocity.y > 0: velocity.y = velocity.y + 50 - (velocity.y * sin(gun.rotation - PI)**2)
+		if rs_angle < 0 and velocity.y > 0: velocity.y = velocity.y - 50 - (velocity.y * sin(gun.rotation - PI)**1.5)
 		Input.start_joy_vibration(0,0.4,0,0.1)
 
 func sprint():

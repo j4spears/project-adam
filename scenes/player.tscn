@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cmh12h7a2r7mp" path="res://sprites/gun.png" id="5_ur7pv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6e84v"]
-size = Vector2(17.5, 33.75)
+size = Vector2(24.0385, 48.6779)
 
 [sub_resource type="Gradient" id="Gradient_4dvvg"]
 offsets = PackedFloat32Array(0.0130208)
@@ -25,12 +25,12 @@ width = 1
 font_size = 63
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3kg8w"]
-size = Vector2(46.0654, 95.0811)
+size = Vector2(69.2308, 150)
 
 [node name="Player" type="CharacterBody2D"]
 physics_interpolation_mode = 2
 top_level = true
-scale = Vector2(0.61, 0.61)
+scale = Vector2(0.52, 0.52)
 collision_mask = 3
 platform_on_leave = 2
 script = ExtResource("1_qlg0r")
@@ -45,7 +45,6 @@ variable_jump = 1
 max_fall_speed = 1500
 ascend = 40
 descend = 75
-wallslide_speed = 350
 wall_jump_distance = 500
 bullet_speed = 2000.0
 bullet_knockback = 1000
@@ -87,6 +86,10 @@ one_shot = true
 wait_time = 0.1
 one_shot = true
 
+[node name="WallLatchTime" type="Timer" parent="Timers"]
+wait_time = 0.1
+one_shot = true
+
 [node name="Sfx" type="Node" parent="."]
 
 [node name="Jump" type="AudioStreamPlayer" parent="Sfx"]
@@ -111,21 +114,21 @@ stream = ExtResource("5_fjrip")
 volume_db = -35.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(12, -38)
+position = Vector2(13.4615, -37.5)
 scale = Vector2(3.2, 3.2)
 shape = SubResource("RectangleShape2D_6e84v")
 
 [node name="Body" type="Sprite2D" parent="."]
 texture_repeat = 2
 position = Vector2(12.2969, -38)
-scale = Vector2(-56.594, 108)
+scale = Vector2(-84.891, 162)
 texture = SubResource("GradientTexture1D_rnjyy")
 region_rect = Rect2(0, 0, 64, 128)
 
 [node name="Gun" type="Sprite2D" parent="."]
-position = Vector2(14, -22)
+position = Vector2(13.4615, -21.1538)
 rotation = 3.14159
-scale = Vector2(0.360001, -0.36)
+scale = Vector2(0.468, -0.468)
 texture = ExtResource("5_ur7pv")
 offset = Vector2(-108.58, 2.81)
 region_enabled = true
@@ -151,7 +154,7 @@ shape = SubResource("CircleShape2D_fjrip")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(0, -50.63)
-zoom = Vector2(2.5, 2.5)
+zoom = Vector2(0.28, 0.28)
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 drag_horizontal_enabled = true
@@ -172,11 +175,11 @@ text = "fall
 label_settings = SubResource("LabelSettings_xtx0q")
 
 [node name="Hurtbox" type="Area2D" parent="."]
-position = Vector2(0, -50.8213)
+position = Vector2(151.923, -121.154)
 collision_mask = 12
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(13.0327, 13.1133)
+position = Vector2(-138.462, 81.5905)
 shape = SubResource("RectangleShape2D_3kg8w")
 
 [node name="Cursor" type="Sprite2D" parent="."]

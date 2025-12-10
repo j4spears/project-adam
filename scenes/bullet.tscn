@@ -29,10 +29,17 @@ func _physics_process(delta: float) -> void:
 		cpu_particles_2d.emitting = true
 		sprite_2d.visible = false
 		velocity = Vector2.ZERO
+		move_and_slide()
+		if ray_cast_2d.get_collider() is CharacterBody2D and ray_cast_2d.get_collider().get_parent().has_signal(\"die\"):
+			ray_cast_2d.get_collider().get_parent().die.emit()
+			print(ray_cast_2d.get_collider())
 	else: move_and_slide()
 
 
 func _on_cpu_particles_2d_finished() -> void: queue_free()
+
+func send_death_signal():
+	pass
 "
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dubn7"]
@@ -45,6 +52,8 @@ point_count = 2
 [node name="Bullet" type="CharacterBody2D"]
 show_behind_parent = true
 top_level = true
+collision_layer = 65
+collision_mask = 65
 script = SubResource("GDScript_h1aey")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -62,7 +71,7 @@ offset = Vector2(-16, 0)
 position = Vector2(-64, 0)
 rotation = 1.5708
 scale = Vector2(10.6667, 5.33333)
-collision_mask = 3
+collision_mask = 67
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 modulate = Color(10, 1, 1, 1)

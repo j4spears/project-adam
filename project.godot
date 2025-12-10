@@ -16,10 +16,9 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 
 [display]
 
-window/size/viewport_width=3840
-window/size/viewport_height=2160
+window/size/viewport_width=640
+window/size/viewport_height=360
 window/size/mode=2
-window/size/resizable=false
 window/stretch/mode="viewport"
 mouse_cursor/custom_image="uid://cse7ox6vyoqhj"
 
