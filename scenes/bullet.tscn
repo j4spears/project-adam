@@ -89,6 +89,7 @@ initial_velocity_max = 500.0
 scale_amount_curve = SubResource("Curve_y25gk")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
+visible = false
 color = Color(0.605274, 0.605274, 0.605274, 1)
 
 [connection signal="finished" from="CPUParticles2D" to="." method="_on_cpu_particles_2d_finished"]

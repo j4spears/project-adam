@@ -299,11 +299,13 @@ func _on_dash_delay_timeout() -> void:
 	
 	dash_used = true
 
-func dash(_delta): 
+func dash(delta): 
+	
+	print(blast_collision.disabled)
 	
 	if dash_used:
 		
-		blast_collision.disabled = true
+		
 		
 		var in_zone = false
 		
@@ -314,9 +316,9 @@ func dash(_delta):
 			elif is_on_wall(): change_state(states.WALLSLIDE)
 			else: change_state(states.FALL)
 		
-	else: velocity *= 50 * _delta
+	else: velocity *= 50 * delta
 
-func exit_dash(): pass
+func exit_dash(): blast_collision.disabled = true
 
 #endregion 
 
@@ -326,8 +328,8 @@ func enter_crouch():
 	#label.text = "crouch"
 	#print("crouch")
 	
-	body.position.y = -17
-	body.scale.y = 65.18
+	body.position.y = -7.8
+	body.scale.y = 101
 
 func crouch(delta):
 	
@@ -361,7 +363,7 @@ func crouch(delta):
 
 func exit_crouch():
 	body.position.y = -38
-	body.scale.y = 108
+	body.scale.y = 162
 
 #endregion 
 
@@ -609,7 +611,7 @@ func aim():
 func shoot():
 	 
 	var gun_overlapping_env = false
-	for body in gun_tip.get_overlapping_bodies(): if body is TileMapLayer: 
+	for overlapping_body in gun_tip.get_overlapping_bodies(): if overlapping_body is TileMapLayer: 
 		gun_overlapping_env = true
 	
 	if state in [states.RUN, states.WALLSLIDE]: burst_used = false

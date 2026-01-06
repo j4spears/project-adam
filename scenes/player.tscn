@@ -154,7 +154,7 @@ shape = SubResource("CircleShape2D_fjrip")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(0, -50.63)
-zoom = Vector2(0.28, 0.28)
+zoom = Vector2(1.83, 1.83)
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 drag_horizontal_enabled = true
