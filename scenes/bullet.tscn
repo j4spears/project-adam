@@ -16,10 +16,15 @@ script/source = "extends CharacterBody2D
 
 func _ready() -> void:
 	global_position = blast_area.global_position
-	sprite_2d.rotation = gun.rotation
-	velocity = Vector2(cos(gun.rotation),sin(gun.rotation)).normalized() * - speed
+	
+	if gun.scale.x > 0:
+		sprite_2d.rotation = - blast_area.rotation 
+		velocity = Vector2(cos(blast_area.rotation), - sin(blast_area.rotation)).normalized() * - speed
+	else:
+		sprite_2d.rotation = PI + blast_area.rotation
+		velocity = Vector2(-cos(blast_area.rotation), - sin(blast_area.rotation)).normalized() * - speed
 
-func _physics_process(delta: float) -> void: 
+func _physics_process(delta: float) -> void:
 	
 	ray_cast_2d.target_position.y = (speed * delta)
 	
@@ -52,8 +57,9 @@ point_count = 2
 [node name="Bullet" type="CharacterBody2D"]
 show_behind_parent = true
 top_level = true
+scale = Vector2(0.78, 0.78)
 collision_layer = 65
-collision_mask = 65
+collision_mask = 66
 script = SubResource("GDScript_h1aey")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -62,7 +68,6 @@ shape = SubResource("RectangleShape2D_dubn7")
 disabled = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(100, 1, 0, 1)
 scale = Vector2(0.378, 0.189)
 texture = ExtResource("1_mkf8s")
 offset = Vector2(-16, 0)
@@ -71,11 +76,9 @@ offset = Vector2(-16, 0)
 position = Vector2(-64, 0)
 rotation = 1.5708
 scale = Vector2(10.6667, 5.33333)
-collision_mask = 67
+collision_mask = 66
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
-modulate = Color(10, 1, 1, 1)
-self_modulate = Color(2, 1, 1, 1)
 emitting = false
 texture = ExtResource("1_mkf8s")
 lifetime = 0.2

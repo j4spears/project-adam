@@ -8,17 +8,22 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="project-adam"
 run/main_scene="uid://3l0f8bybwa32"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 
 [display]
 
-window/size/viewport_width=3840
-window/size/viewport_height=2160
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 window/size/mode=2
+window/size/initial_position_type=0
 window/stretch/mode="viewport"
 mouse_cursor/custom_image="uid://cse7ox6vyoqhj"
 
@@ -166,11 +171,10 @@ prime_grenade_right={
 }
 crouch={
 "deadzone": 0.2,
-"events": [Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":8,"pressure":0.0,"pressed":true,"script":null)
-]
+"events": []
 }
 
 [rendering]
 
 viewport/hdr_2d=true
-environment/defaults/default_clear_color=Color(0.805458, 0.866469, 0.594631, 1)
+environment/defaults/default_clear_color=Color(0.254419, 0.209554, 0.422317, 1)

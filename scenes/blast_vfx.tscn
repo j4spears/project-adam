@@ -65,10 +65,11 @@ _data = {
 script = SubResource("GDScript_vweji")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.595509, 0.855058, 0.984493, 0.485)
 z_index = 1
-position = Vector2(-159, 6)
+position = Vector2(-79, -5.96046e-08)
 rotation = -1.5708
-scale = Vector2(5, 5)
+scale = Vector2(2.5, 2.5)
 texture = ExtResource("1_abr51")
 flip_h = true
 hframes = 8

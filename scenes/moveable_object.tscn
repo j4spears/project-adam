@@ -12,6 +12,7 @@ script/source = "extends CharacterBody2D
 
 @onready var blast_area: Area2D = $\"../Player/Gun/BlastArea\"
 @onready var player: CharacterBody2D = $\"../Player\"
+@onready var body: Sprite2D = $\"../Player/Body\"
 
 var final_velocity
 
@@ -57,9 +58,13 @@ func enter_air(): pass
 func enter_ground(): pass
 
 func enter_blasted(): 
-	final_velocity = Vector2(-cos(player.gun.rotation),-sin(player.gun.rotation)) * dash_speed
+	
+	if body.scale.x > 0:
+		final_velocity = Vector2(-cos(blast_area.rotation),sin(blast_area.rotation)) * dash_speed
+	else:
+		final_velocity = Vector2(cos(blast_area.rotation),sin(blast_area.rotation)) * dash_speed
 	velocity.y = 0
-	player.dash_time.wait_time = player.dash_length * (abs(cos(player.gun.rotation)) + 1)
+	player.dash_time.wait_time = player.dash_length * (abs(cos(blast_area.rotation)) + 1)
 	player.dash_time.start()
 	velocity = final_velocity
 

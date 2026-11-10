@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://batqc3uh3xgkw"
-path="res://.godot/imported/rat sprite map.png-32be6726753d70460dee3301245041b3.ctex"
+uid="uid://c7wah77nh75fi"
+path="res://.godot/imported/gravnade.png-cfe3c91138d0cebb362bb9e616412c67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/rat sprite map.png"
-dest_files=["res://.godot/imported/rat sprite map.png-32be6726753d70460dee3301245041b3.ctex"]
+source_file="res://sprites/gravnade.png"
+dest_files=["res://.godot/imported/gravnade.png-cfe3c91138d0cebb362bb9e616412c67.ctex"]
 
 [params]
 

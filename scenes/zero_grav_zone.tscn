@@ -38,14 +38,15 @@ scale = Vector2(18.8, 2.72)
 shape = SubResource("RectangleShape2D_xl68w")
 
 [node name="ZoneSprite" type="Sprite2D" parent="Area2D"]
-modulate = Color(1, 1, 1, 0.296)
+modulate = Color(0.65, 0.65, 0.65, 0.294118)
 show_behind_parent = true
-z_index = -7
+z_index = -4
 position = Vector2(0, 82.9546)
 scale = Vector2(11.84, 5.27346)
 texture = ExtResource("1_snolu")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="Area2D"]
+modulate = Color(0.65, 0.65, 0.65, 1)
 position = Vector2(0, 132.955)
 amount = 16
 texture = ExtResource("1_snolu")

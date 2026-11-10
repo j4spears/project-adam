@@ -9,6 +9,7 @@ script/source = "extends Node2D
 @onready var platform:= path_2d.get_node(\"AnimatableBody2D\")
 @onready var path_follow:= path_2d.get_node(\"PathFollow\")
 @onready var player:= get_parent().get_node(\"Player\")
+@onready var body: Sprite2D = player.get_node(\"Body\")
 @onready var blast_area:= player.get_node(\"Gun/BlastArea\")
 @onready var line_2d: Line2D = $Line2D
 @onready var jump_boost_buffer: Timer = $JumpBoostBuffer
@@ -27,14 +28,14 @@ func _process(delta: float) -> void:
 	if player.state == player.states.CROUCH and player.blast_collision.disabled == false and is_on_platform():
 		
 		destination_reached = false
-		dot_product = Vector2((-cos(player.gun.rotation)),-sin(player.gun.rotation)).dot(path_2d.curve.get_point_position(1).normalized())
+		dot_product = -Vector2((-cos(blast_area.rotation)),-sin(blast_area.rotation)).dot(path_2d.curve.get_point_position(1).normalized())
 		if dot_product > 0.1: destination_point = 0
 		elif dot_product < -0.1: destination_point = 1
 		
 	elif blast_area.get_overlapping_bodies().has(platform) and not is_on_platform():
 		
 		destination_reached = false
-		dot_product = Vector2((-cos(player.gun.rotation)),-sin(player.gun.rotation)).dot(path_2d.curve.get_point_position(1).normalized())
+		dot_product = -Vector2((-cos(blast_area.rotation)),-sin(blast_area.rotation)).dot(path_2d.curve.get_point_position(1).normalized())
 		if dot_product > 0.1: destination_point = 1
 		elif dot_product < -0.1: destination_point = 0
 	

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://um17mry84jor"
-path="res://.godot/imported/cave layer 1.png-20662e0130ad79bc5154359924a46e4e.ctex"
+uid="uid://bv88r4h882mv7"
+path="res://.godot/imported/adam spritesheet.png-1fe868aebbc7e5b8040f819cdcf58bc4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/cave layer 1.png"
-dest_files=["res://.godot/imported/cave layer 1.png-20662e0130ad79bc5154359924a46e4e.ctex"]
+source_file="res://sprites/adam spritesheet.png"
+dest_files=["res://.godot/imported/adam spritesheet.png-1fe868aebbc7e5b8040f819cdcf58bc4.ctex"]
 
 [params]
 
